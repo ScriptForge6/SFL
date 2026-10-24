@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ]]--
 
-includes("define.lua")
+includes("./define.lua")
 
 target("webview")
     set_kind("headeronly")
@@ -28,13 +28,13 @@ target("webview")
             { public = true }
         )
     end
+
+    local header = path.join(
+        WEBVIEW2_DIR,
+        "build/native/include/WebView2.h"
+    )
     on_load(function (target)
         if is_plat("windows") then
-            local header = path.join(
-                WEBVIEW2_DIR,
-                "build/native/include/WebView2.h"
-            )
-
             if not os.isfile(header) then
                 os.exec('powershell -NoProfile -ExecutionPolicy Bypass -File "Download-Webview2.ps1"')
             end
