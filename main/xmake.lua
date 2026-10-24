@@ -15,9 +15,10 @@ includes("../define.lua")
 
 target(MAIN_NAME)
     set_kind("binary")
-
     add_includedirs(MAIN_DIR)
     
+
+    add_deps("webview")
     add_files(path.join(MAIN_DIR, "*.cpp"))
     add_headerfiles(path.join(MAIN_DIR, "*.hpp"))
 target_end()

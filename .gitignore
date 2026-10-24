@@ -1,7 +1,7 @@
-# build
-build/
+# build/
+/build/
 
-# .vs
+# .vs/
 .vs/
 
 # .vscode/
@@ -10,3 +10,6 @@ build/
 
 # .xmake/
 .xmake/
+
+# thirdParty/webview2/
+thirdParty/webview2/
