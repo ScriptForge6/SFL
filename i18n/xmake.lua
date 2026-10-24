@@ -17,6 +17,7 @@ target(I18N_NAME)
 	set_kind(LIBRARY_KIND)
 
     add_defines("SFL_LANG_EXPORT")
+    add_defines(LIBRARY_DEFINE)
 
     add_includedirs(I18N_DIR, {public = true})
     

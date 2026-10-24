@@ -10,7 +10,7 @@
 // limitations under the License.
 
 /**
- * @file KiracApi.hpp
+ * @file SFLApi.hpp
  * @brief 定义了一些宏
  * @author Scriptforge
  * @date 2026/10/16
@@ -111,6 +111,12 @@
 	#define SFL_NODISCARD
 #endif
 
+#if defined(SFL_STATIC) && defined(SFL_SHARED)
+	#error "SFL_STATIC and SFL_SHARED cannot both be defined"
+#endif
 
+#if !defined(SFL_STATIC) && !defined(SFL_SHARED)
+	#error "SFL_STATIC and SFL_SHARED must be defined one"
+#endif
 
 #endif
