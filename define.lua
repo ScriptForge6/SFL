@@ -41,7 +41,7 @@ WEBVIEW2_DIR = path.join(THIRDPARTY_DIR, "webview2")
 API_NAME = "SFLApi.hpp"
 API_FILE = path.join(PROJECTDIR, API_NAME)
 
-WEBVIEW_LUA = path.join(PROJECTDIR, "webiew.lua")
+WEBVIEW_LUA = path.join(PROJECTDIR, "webview.lua")
 
 MSG_NAME = "msg"
 MSG_DIR = path.join(PROJECTDIR, MSG_NAME)
