@@ -1,20 +1,10 @@
---[[
-Copyright 2026 Scriptforge
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-    http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-]]--
-
 includes("./define.lua")
 
 target("webview")
     set_kind("headeronly")
+
+    local wv2_include = path.join(WEBVIEW2_DIR, "include")
+    local wv2_header  = path.join(wv2_include, "WebView2.h")
 
     add_headerfiles(path.join(WEBVIEW_DIR, "core/include/(webview/**.h)"))
     add_includedirs(
@@ -23,23 +13,26 @@ target("webview")
     )
 
     if is_plat("windows") then
-        add_includedirs(
-            path.join(WEBVIEW2_DIR, "build/native/include"),
-            { public = true }
-        )
+        add_includedirs(wv2_include, { public = true })
+    elseif is_plat("macosx") then
+    add_frameworks("WebKit", { public = true })
+    add_syslinks("dl", "objc", { public = true })
     end
 
-    local header = path.join(
-        WEBVIEW2_DIR,
-        "build/native/include/WebView2.h"
-    )
     on_load(function (target)
         if is_plat("windows") then
-            if not os.isfile(header) then
-                os.exec('powershell -NoProfile -ExecutionPolicy Bypass -File "Download-Webview2.ps1"')
-            end
+            os.exec('powershell -NoProfile -ExecutionPolicy Bypass -File "%s"',
+                path.join(os.projectdir(), "Download-Webview2.ps1"))
 
-            assert(os.isfile(header), "WebView2 SDK setup failed: WebView2.h not found!")
+            assert(os.isfile(wv2_header), "WebView2 SDK setup failed: WebView2.h not found!")
+        elseif is_plat("linux") then
+            os.exec('bash "%s"', path.join(os.projectdir(), "Download-GTK.sh"))
+
+            local cflags = os.iorunv("pkg-config", {"--cflags", "gtk+-3.0", "webkit2gtk-4.1"})
+            local libs   = os.iorunv("pkg-config", {"--libs",   "gtk+-3.0", "webkit2gtk-4.1"})
+            target:add("cxxflags", cflags:trim(), { public = true, force = true })
+            target:add("ldflags",  libs:trim(),   { public = true, force = true })
+            target:add("syslinks", "dl", { public = true })
         end
     end)
 target_end()
