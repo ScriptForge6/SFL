@@ -27,7 +27,7 @@
 #include <string>
 #include <string_view>
 
-#include <nlohmann/json.hpp>
+//#include <nlohmann/json.hpp>
 
 SFL_I18N_START
 /**
@@ -82,7 +82,7 @@ private:
     std::exception_ptr m_lazyLoadExceptPtr = nullptr;
     std::string m_langCode;
     path_t m_dir;
-    nlohmann::json m_json;
+    //nlohmann::json m_json;
 };
 SFL_I18N_END
 

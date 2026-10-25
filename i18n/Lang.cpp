@@ -27,7 +27,7 @@ SFL_I18N Lang::Lang(
 ) noexcept
     : m_langCode(langCode) {
     try {
-        m_dir = dir ? *dir : getExeDir() / LANG;
+        m_dir = dir ? *dir : getExeDir() / "lang";//TODO: LANG
         reload();
     }
     catch (...) {
