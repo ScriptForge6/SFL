@@ -17,8 +17,8 @@
  */
 
 #pragma once
-#ifndef KIRA_COMPILER_LANG_HPP
-#define KIRA_COMPILER_LANG_HPP
+#ifndef SFL_LANG_HPP
+#define SFL_LANG_HPP
 #include "LangApi.hpp"
 
 #include <exception>
