@@ -24,6 +24,9 @@
 #include <filesystem>
 #include <optional>
 
+#include <LangApi.hpp>
+
+SFL_I18N_START
 /**
  * @brief 获取可执行文件地址
  * @return 返回可执行文件地址
@@ -37,5 +40,6 @@ std::filesystem::path getExePath();
  * @retval std::nullopt 出现错误
 */
 std::filesystem::path getExeDir();
+SFL_I18N_END
 
 #endif
