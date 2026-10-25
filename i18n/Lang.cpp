@@ -20,7 +20,8 @@
 
 #include "ExePath.hpp"
 
-Lang::Lang(
+
+SFL_I18N Lang::Lang(
     std::string_view langCode,
     const std::optional<path_t>& dir/* = std::nullopt*/
 ) noexcept
@@ -34,6 +35,15 @@ Lang::Lang(
     }
 }
 
-void Lang::reload() {
+auto SFL_I18N Lang::reload() -> void {
 
+}
+
+SFL_I18N Lang::Guard::Guard(SFL_I18N Lang& owner) {
+    owner.validate();
+}
+
+auto SFL_I18N Lang::validate() -> void {
+    if (!m_lazyLoadExceptPtr) return;
+    std::rethrow_exception(m_lazyLoadExceptPtr);
 }

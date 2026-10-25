@@ -22,17 +22,21 @@
 #ifndef SFL_LANGAPI_HPP
 #define SFL_LANGAPI_HPP
 
-#ifndef SFL_API_LANG
 #if defined(SFL_LANG_IMPORT) && defined(SFL_LANG_EXPORT)
-#error "Error: Only one of SFL_LANG_IMPORT and SFL_LANG_EXPORT may be defined"
+	#error "Error: Only one of SFL_LANG_IMPORT and SFL_LANG_EXPORT may be defined"
 #endif
-	#if defined(SFL_LANG_IMPORT)
-		#define SFL_API_LANG SFL_IMPORT_API
-	#elif defined(SFL_LANG_EXPORT)
-		#define SFL_API_LANG SFL_EXPORT_API
+#if defined(SFL_LANG_IMPORT)
+	#define SFL_API_LANG SFL_IMPORT_API
+#elif defined(SFL_LANG_EXPORT)
+	#define SFL_API_LANG SFL_EXPORT_API
 #else
-#error "Error: Must define SFL_LANG_IMPORT or SFL_LANG_EXPORT"
-	#endif
+	#error "Error: Must define SFL_LANG_IMPORT or SFL_LANG_EXPORT"
 #endif
+
+#define SFL_I18N_START SFL_START \
+					   namespace I18n {
+#define SFL_I18N_END SFL_END \
+					 }
+#define SFL_I18N SFL I18n::
 
 #endif

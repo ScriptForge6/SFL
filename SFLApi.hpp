@@ -20,6 +20,10 @@
 #ifndef SFL_SFLAPI_HPP
 #define SFL_SFLAPI_HPP
 
+#define SFL_START namespace Sfl {
+#define SFL_END }
+#define SFL ::Sfl::
+
 #if defined(_WIN32) || defined(_WIN64)
 	#define SFL_WIN 1
 #elif defined(__APPLE__)
@@ -64,27 +68,23 @@
 #endif
 
 
-#ifndef SFL_IMPORT_API
-	#if defined(SFL_STATIC)
-		#define SFL_IMPORT_API
+#if defined(SFL_STATIC)
+	#define SFL_IMPORT_API
+#else
+	#if defined(SFL_WIN)
+		#define SFL_IMPORT_API __declspec(dllimport)
 	#else
-		#if defined(SFL_WIN)
-			#define SFL_IMPORT_API __declspec(dllimport)
-		#else
-			#define SFL_IMPORT_API
-		#endif
+		#define SFL_IMPORT_API
 	#endif
 #endif
 
-#ifndef SFL_EXPORT_API
-	#if defined(SFL_STATIC)
-		#define SFL_EXPORT_API
+#if defined(SFL_STATIC)
+	#define SFL_EXPORT_API
+#else
+	#if defined(SFL_WIN)
+		#define SFL_EXPORT_API __declspec(dllexport)
 	#else
-		#if defined(SFL_WIN)
-			#define SFL_EXPORT_API __declspec(dllexport)
-		#else
-			#define SFL_EXPORT_API __attribute__((visibility("default")))
-		#endif
+		#define SFL_EXPORT_API __attribute__((visibility("default")))
 	#endif
 #endif
 
