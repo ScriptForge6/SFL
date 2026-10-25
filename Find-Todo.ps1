@@ -1,8 +1,27 @@
+<#
+   Copyright 2026 Scriptforge
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+#>
+
+[CmdletBinding()]
 param(
     [string]$Path = ".",
-    [string]$Pattern = "[T]ODO:",   # 用 [T] 写法，避免脚本源码里的默认值匹配到自己
+    [string]$Pattern = "TODO:",
     [int]$Context = 2,              # 匹配行上下各显示几行
-    [string[]]$ExcludeDir = @('.git', '.vs', 'bin', 'obj', 'node_modules'),
+    [string[]]$ExcludeDir = @('.git', '.vs', 'bin', 'obj', 'node_modules'),  # 仅在非 git 仓库时生效
+    [string[]]$Extension = @(),     # 可选：只扫描这些扩展名，例如 -Extension .cpp,.h,.js
     [switch]$NoBat                  # 强制不使用 bat
 )
 
@@ -23,19 +42,43 @@ if (-not $NoBat) {
     }
 }
 
-# ---------- 排除规则 ----------
+# ---------- 收集文件 ----------
+$root = (Resolve-Path -LiteralPath $Path).Path
 $self = if ($PSCommandPath) { (Resolve-Path -LiteralPath $PSCommandPath).Path } else { $null }
-$dirNames   = ($ExcludeDir | ForEach-Object { [regex]::Escape($_) }) -join '|'
-$excludeRx  = "[\\/]($dirNames)[\\/]"
 
+# 判断是否在 git 仓库内
+$inGit = $false
+if (Get-Command git -ErrorAction SilentlyContinue) {
+    git -C $root rev-parse --is-inside-work-tree 2>$null | Out-Null
+    $inGit = ($LASTEXITCODE -eq 0)
+}
+
+if ($inGit) {
+    Write-Host "已检测到 git 仓库，将遵循 .gitignore。" -ForegroundColor DarkGray
+    $files = git -C $root -c core.quotepath=off ls-files --cached --others --exclude-standard |
+        Sort-Object -Unique |
+        ForEach-Object { Join-Path $root $_ } |
+        Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } |   # 过滤已删除但仍在索引里的文件
+        ForEach-Object { Get-Item -LiteralPath $_ }
+}
+else {
+    # 回退：不在 git 仓库里，使用 -ExcludeDir 的手动排除
+    $dirNames  = ($ExcludeDir | ForEach-Object { [regex]::Escape($_) }) -join '|'
+    $excludeRx = "[\\/]($dirNames)[\\/]"
+    $files = Get-ChildItem -LiteralPath $root -Recurse -File -ErrorAction SilentlyContinue |
+        Where-Object { $_.FullName -notmatch $excludeRx }
+}
+
+# 可选：按扩展名过滤
+if ($Extension.Count -gt 0) {
+    $files = $files | Where-Object { $_.Extension -in $Extension }
+}
+
+# ---------- 搜索 ----------
 Write-Host "正在搜索包含 '$Pattern' 的注释..." -ForegroundColor Cyan
 
-$results = Get-ChildItem -Path $Path -Recurse -File -ErrorAction SilentlyContinue |
-    Where-Object {
-        $_.FullName -notmatch $excludeRx -and
-        $_.FullName -ne $self -and
-        $_.Name -ne 'find-todo.ps1'
-    } |
+$results = $files |
+    Where-Object { $_.FullName -ne $self -and $_.Name -ne 'find-todo.ps1' } |
     Select-String -Pattern $Pattern
 
 if (-not $results) {
@@ -43,8 +86,9 @@ if (-not $results) {
     return
 }
 
+# ---------- 输出 ----------
 if ($bat) {
-    # ---------- 使用 bat 语法高亮 ----------
+    # 使用 bat 语法高亮
     foreach ($r in $results) {
         $start = [Math]::Max(1, $r.LineNumber - $Context)
         $end   = $r.LineNumber + $Context
@@ -59,8 +103,8 @@ if ($bat) {
     }
 }
 else {
-    # ---------- 回退：表格输出 ----------
-    $cwd = (Get-Location).Path + [IO.Path]::DirectorySeparatorChar
+    # 回退：表格输出
+    $cwd = $root + [IO.Path]::DirectorySeparatorChar
     $results | ForEach-Object {
         [PSCustomObject]@{
             "文件路径" = $_.Path.Replace($cwd, "")

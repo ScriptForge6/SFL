@@ -12,7 +12,6 @@ limitations under the License.
 ]]--
 
 includes("define.lua")
-
 set_project(SCRIPT_NAME)
 set_version(VERSION)
 
@@ -25,10 +24,10 @@ add_defines(string.format("AUTHOR=\"%s\"", AUTHOR))
 add_rules("mode.debug", "mode.release")
 
 set_policy("package.install_locally", true)
---add_requires("nlohmann_json >=3.11.0")
-add_requires("webview")
 
 set_defaultmode("mode.debug")
+
+add_defines(LIBRARY_DEFINE)
 
 set_languages("c++20")
 set_warnings("allextra")
@@ -43,4 +42,6 @@ add_cxxflags({
 add_includedirs(PROJECTDIR)
 add_headerfiles(API_FILE)
 
+--includes(MSG_LUA)
+includes("webview.lua")
 includes(MAIN_LUA)

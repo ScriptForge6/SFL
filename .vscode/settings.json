@@ -1,0 +1,4 @@
+{
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/.vscode/compile_commands.json",
+    "C_Cpp.errorSquiggles": "disabled"
+}

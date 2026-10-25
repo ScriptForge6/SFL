@@ -19,4 +19,36 @@ AUTHOR = "Scriptforge"
 PROJECTDIR = os.projectdir()
 local TARGET_MAIN_FILE = "xmake.lua"
 
-MAIN_DIR = path.join(PROJECTDIR)
+---
+
+option("static")
+    set_default(false)
+    set_showmenu(true)
+    set_description("Build as static library")
+option_end()
+
+LIBRARY_KIND = has_config("static") and "static" or "shared"
+LIBRARY_DEFINE = has_config("static") and "SFL_STATIC" or "SFL_SHARED"
+
+---
+
+THIRDPARTY_DIR = path.join(PROJECTDIR, "thirdParty")
+WEBVIEW_DIR = path.join(THIRDPARTY_DIR, "webview")
+WEBVIEW2_DIR = path.join(THIRDPARTY_DIR, "webview2")
+
+---
+
+API_NAME = "SFLApi.hpp"
+API_FILE = path.join(PROJECTDIR, API_NAME)
+
+MSG_NAME = "msg"
+MSG_DIR = path.join(PROJECTDIR, MSG_NAME)
+MSG_LUA = path.join(MSG_DIR, TARGET_MAIN_FILE)
+
+I18N_NAME = "i18n"
+I18N_DIR = path.join(PROJECTDIR, I18N_NAME)
+I18N_LUA = path.join(I18N_DIR, TARGET_MAIN_FILE)
+
+MAIN_NAME = "SFL"
+MAIN_DIR = path.join(PROJECTDIR, "main")
+MAIN_LUA = path.join(MAIN_DIR, TARGET_MAIN_FILE)
