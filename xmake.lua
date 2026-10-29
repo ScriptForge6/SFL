@@ -21,17 +21,20 @@ add_defines(string.format("LICENSE=\"%s\"", LICENSE))
 add_defines(string.format("START_YEAR=%d", START_YEAR))
 add_defines(string.format("AUTHOR=\"%s\"", AUTHOR))
 
-add_rules("mode.debug", "mode.release")
+add_rules("basename")
 
 set_policy("package.install_locally", true)
 
-set_defaultmode("mode.debug")
+set_defaultmode("debug")
 
 add_defines(LIBRARY_DEFINE)
 
 set_languages("c++20")
 set_warnings("allextra")
 set_symbols("debug", "hidden")
+
+set_targetdir(TARGET_DIR)
+set_prefixname("")
 
 add_cxxflags({
     "/permissive-",
