@@ -45,7 +45,8 @@ add_cxxflags({
 add_includedirs(PROJECTDIR)
 add_headerfiles(API_FILE)
 
+includes(GUARD_LUA)
 includes(I18N_LUA)
---TODO: includes(MSG_LUA)
+includes(MSG_LUA)
 includes(WEBVIEW_LUA)
 includes(MAIN_LUA)

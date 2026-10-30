@@ -20,13 +20,12 @@
 
 #include "ExePath.hpp"
 
-
 SFL_I18N Lang::Lang(
     std::string_view langCode,
     const std::optional<path_t>& dir/* = std::nullopt*/
-) noexcept
-    : m_langCode(langCode) {
+) noexcept {
     try {
+        m_langCode = langCode;
         m_dir = dir ? *dir : SFL_I18N getExeDir() / "lang";//TODO: LANG
         reload();
     }
@@ -39,11 +38,22 @@ auto SFL_I18N Lang::reload() -> void {
 
 }
 
-SFL_I18N Lang::Guard::Guard(SFL_I18N Lang& owner) {
-    owner.validate();
+auto SFL_I18N Lang::validate() -> bool {
+    return static_cast<bool>(m_lazyLoadExceptPtr);
 }
 
-auto SFL_I18N Lang::validate() -> void {
-    if (!m_lazyLoadExceptPtr) return;
-    std::rethrow_exception(m_lazyLoadExceptPtr);
+#if 0
+SFL_I18N Lang::Guard::Guard(SFL_I18N Lang& owner) {
+    owner.validateForGuard();
+}
+#endif
+
+auto SFL_I18N Lang::GuardConstructor() -> void {
+    if (validate()) {
+        std::rethrow_exception(m_lazyLoadExceptPtr);
+    }
+}
+
+auto SFL_I18N Lang::GuardDestructor() -> void {
+    return;
 }

@@ -19,7 +19,7 @@
 #pragma once
 #ifndef SFL_LANG_HPP
 #define SFL_LANG_HPP
-#include "LangApi.hpp"
+#include "I18nApi.hpp"
 
 #include <exception>
 #include <filesystem>
@@ -58,27 +58,22 @@ public:
      * @brief 重加载
      */
     auto reload() -> void;
+
+    /**
+     * @brief 验证函数（验证是否有包含的异常）
+     */
+    auto validate() -> bool;
+
+    /**
+     * @brief 验证函数（在 Guard 类使用）
+     */
+    auto GuardConstructor() -> void;
+
+    /**
+     * @brief 验证函数（在 Guard 类使用）
+     */
+    auto GuardDestructor() -> void;
 private:
-    /**
-     * @brief 自动检测RAII
-    */
-    class Guard {
-    public:
-        Guard() = delete;
-        Guard(const Guard&) = delete;
-        Guard(Guard&&) = delete;
-        /**
-         * @brief Guard 的构造函数
-         * @param[in] owner 父类的引用
-        */
-        explicit Guard(SFL_I18N Lang& owner);
-
-    };
-    /**
-     * @brief 验证函数
-    */
-    auto validate() -> void;
-
     std::exception_ptr m_lazyLoadExceptPtr = nullptr;
     std::string m_langCode;
     path_t m_dir;

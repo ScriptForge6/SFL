@@ -51,6 +51,10 @@ API_FILE = path.join(PROJECTDIR, API_NAME)
 
 WEBVIEW_LUA = path.join(PROJECTDIR, "webview.lua")
 
+GUARD_NAME = "guard"
+GUARD_DIR = path.join(PROJECTDIR, GUARD_NAME)
+GUARD_LUA = path.join(GUARD_DIR, TARGET_MAIN_FILE)
+
 MSG_NAME = "msg"
 MSG_DIR = path.join(PROJECTDIR, MSG_NAME)
 MSG_LUA = path.join(MSG_DIR, TARGET_MAIN_FILE)

@@ -10,7 +10,7 @@
 // limitations under the License.
 
 /**
- * @file LangApi.hpp
+ * @file I18nApi.hpp
  * @brief 定义了一些宏
  * @author Scriptforge
  * @date 2026/10/23
@@ -19,15 +19,15 @@
 #pragma once
 #include <SFLApi.hpp>
 
-#ifndef SFL_LANGAPI_HPP
-#define SFL_LANGAPI_HPP
+#ifndef SFL_I18NAPI_HPP
+#define SFL_I18NAPI_HPP
 
-#if defined(SFL_LANG_IMPORT) && defined(SFL_LANG_EXPORT)
+#if defined(SFL_I18N_IMPORT) && defined(SFL_I18N_EXPORT)
 	#error "Error: Only one of SFL_LANG_IMPORT and SFL_LANG_EXPORT may be defined"
 #endif
-#if defined(SFL_LANG_IMPORT)
+#if defined(SFL_I18N_IMPORT)
 	#define SFL_API_LANG SFL_IMPORT_API
-#elif defined(SFL_LANG_EXPORT)
+#elif defined(SFL_I18N_EXPORT)
 	#define SFL_API_LANG SFL_EXPORT_API
 #else
 	#error "Error: Must define SFL_LANG_IMPORT or SFL_LANG_EXPORT"

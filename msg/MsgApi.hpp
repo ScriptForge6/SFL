@@ -13,7 +13,7 @@
  * @file MsgApi.hpp
  * @brief 定义了一些宏
  * @author Scriptforge
- * @date 2026/10/23
+ * @date 2026/10/30
  */
 
 #pragma once
@@ -33,10 +33,10 @@
 	#error "Error: Must define SFL_MSG_IMPORT or SFL_MSG_EXPORT"
 #endif
 
-#define SFL_I18N_START SFL_START \
+#define SFL_MSG_START SFL_START \
 					   namespace Msg {
-#define SFL_I18N_END SFL_END \
+#define SFL_MSG_END SFL_END \
 					 }
-#define SFL_I18N SFL Msg::
+#define SFL_MSG SFL Msg::
 
 #endif

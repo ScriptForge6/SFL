@@ -16,6 +16,12 @@ includes("../define.lua")
 target(MSG_NAME)
 	set_kind(LIBRARY_KIND)
 
+    add_deps(I18N_NAME)
+
+    add_defines("SFL_I18N_IMPORT")
+    add_defines("SFL_MSG_EXPORT")
+    add_defines(LIBRARY_DEFINE)
+
     add_includedirs(MSG_DIR, {public = true})
     
     add_files(path.join(MSG_DIR, "*.cpp"))

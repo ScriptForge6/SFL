@@ -20,11 +20,10 @@
 #pragma once
 #ifndef SFL_EXEPATH_HPP
 #define SFL_EXEPATH_HPP
+#include "I18nApi.hpp"
 
 #include <filesystem>
 #include <optional>
-
-#include <LangApi.hpp>
 
 SFL_I18N_START
 /**
