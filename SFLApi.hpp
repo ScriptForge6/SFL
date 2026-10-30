@@ -24,6 +24,13 @@
 #define SFL_END }
 #define SFL ::Sfl::
 
+#define SFL_STRINGIFY2_(x) #x
+#define SFL_STRINGIFY_(x)  SFL_STRINGIFY2_(x)
+
+#include <stdexcept>
+#define SFL_TODO(msg) \
+		throw std::logic_error(__FILE__ "(" SFL_STRINGIFY_(__LINE__) "): TODO: " msg)
+
 #if defined(_WIN32) || defined(_WIN64)
 	#define SFL_WIN 1
 #elif defined(__APPLE__)
@@ -65,6 +72,14 @@
 	#define SFL_GNU_MAJOR __GNUC__
 	#define SFL_GNU_MINOR __GNUC_MINOR__
 	#define SFL_GNU_PATCH __GNUC_PATCHLEVEL__
+#endif
+
+#if defined(SFL_STATIC) && defined(SFL_SHARED)
+	#error "SFL_STATIC and SFL_SHARED cannot both be defined"
+#endif
+
+#if !defined(SFL_STATIC) && !defined(SFL_SHARED)
+	#error "SFL_STATIC and SFL_SHARED must be defined one"
 #endif
 
 
@@ -110,13 +125,4 @@
 #else
 	#define SFL_NODISCARD
 #endif
-
-#if defined(SFL_STATIC) && defined(SFL_SHARED)
-	#error "SFL_STATIC and SFL_SHARED cannot both be defined"
-#endif
-
-#if !defined(SFL_STATIC) && !defined(SFL_SHARED)
-	#error "SFL_STATIC and SFL_SHARED must be defined one"
-#endif
-
 #endif

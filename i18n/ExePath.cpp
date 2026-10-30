@@ -46,9 +46,9 @@ std::filesystem::path getExePath() {
     std::wstring buf(MAX_PATH, L'\0');
     for (;;) {
         DWORD n = GetModuleFileNameW(nullptr, buf.data(), static_cast<DWORD>(buf.size()));
-        if (n == 0); //TODO: throw
+        if (n == 0)SFL_TODO("throw");
         if (n < buf.size()) { buf.resize(n); break; }   // 成功
-        if (buf.size() > 32768); //TODO: throw    // 防止无限扩容
+        if (buf.size() > 32768)SFL_TODO("throw");    // 防止无限扩容
         buf.resize(buf.size() * 2);                     // 被截断，重试
     }
     result = buf;
@@ -57,16 +57,16 @@ std::filesystem::path getExePath() {
     uint32_t size = 0;
     _NSGetExecutablePath(nullptr, &size);               // 先问需要多大
     std::vector<char> buf(size);
-    if (_NSGetExecutablePath(buf.data(), &size) != 0); //TODO: throw
+    if (_NSGetExecutablePath(buf.data(), &size) != 0)SFL_TODO("throw");
     result = buf.data();
 
 #elif defined(SFL_LINUX) || defined(SFL_WASM)
     std::string buf(256, '\0');
     for (;;) {
         ssize_t n = readlink("/proc/self/exe", buf.data(), buf.size());
-        if (n < 0); //TODO: throw
+        if (n < 0)SFL_TODO("throw");
         if (static_cast<size_t>(n) < buf.size()) { buf.resize(n); break; }
-        if (buf.size() > 65536); //TODO: throw
+        if (buf.size() > 65536)SFL_TODO("throw");
         buf.resize(buf.size() * 2);                     // readlink 截断时不报错，要自己判断
     }
     result = buf;
@@ -74,9 +74,9 @@ std::filesystem::path getExePath() {
 #elif defined(SFL_FREEBSD)
     int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1 };
     size_t len = 0;
-    if (sysctl(mib, 4, nullptr, &len, nullptr, 0) != 0 || len == 0); //TODO: throw
+    if (sysctl(mib, 4, nullptr, &len, nullptr, 0) != 0 || len == 0)SFL_TODO("throw");
     std::string buf(len, '\0');
-    if (sysctl(mib, 4, buf.data(), &len, nullptr, 0) != 0); //TODO: throw
+    if (sysctl(mib, 4, buf.data(), &len, nullptr, 0) != 0)SFL_TODO("throw");
     result = buf.c_str();
 #endif
 
