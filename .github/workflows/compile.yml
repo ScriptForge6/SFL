@@ -1,0 +1,54 @@
+name: Compile
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+  workflow_dispatch:
+
+# 同一分支上有新提交时，取消还在跑的旧任务
+concurrency:
+  group: compile-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false          # 一个平台失败时，其他平台继续跑，方便对比
+      matrix:
+        os: [ windows-latest, ubuntu-latest, macos-latest ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive   # thirdParty 下如果有 git 子模块（比如 webview）
+
+      - name: Setup xmake
+        uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: '3.1.2'
+
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libgtk-3-dev libwebkit2gtk-4.1-dev
+
+      - name: Configure
+        run: xmake f -c -y
+
+      - name: Build
+        run: xmake -y -v
+
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: SFL-${{ runner.os }}
+          path: build/target
+          if-no-files-found: error

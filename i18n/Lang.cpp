@@ -18,7 +18,11 @@
 
 #include "Lang.hpp"
 
+#include <Guard.hpp>
+
 #include "ExePath.hpp"
+
+#define SFL_LANG_INTERNAL_GUARD SFL_GUARD Guard r_guard(*this)
 
 SFL_I18N Lang::Lang(
     std::string_view langCode,
@@ -35,18 +39,11 @@ SFL_I18N Lang::Lang(
 }
 
 auto SFL_I18N Lang::reload() -> void {
-
 }
 
 auto SFL_I18N Lang::validate() -> bool {
     return static_cast<bool>(m_lazyLoadExceptPtr);
 }
-
-#if 0
-SFL_I18N Lang::Guard::Guard(SFL_I18N Lang& owner) {
-    owner.validateForGuard();
-}
-#endif
 
 auto SFL_I18N Lang::GuardConstructor() -> void {
     if (validate()) {

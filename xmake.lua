@@ -34,13 +34,16 @@ set_warnings("allextra")
 set_symbols("debug", "hidden")
 
 set_targetdir(TARGET_DIR)
-set_prefixname("")
 
 add_cxxflags({
     "/permissive-",
     "/Zc:preprocessor",
     "/Zc:templateScope"
 }, {tools = {"cl"}})
+
+if is_plat("linux") then
+    add_rpathdirs("$ORIGIN", {public = true})
+end
 
 add_includedirs(PROJECTDIR)
 add_headerfiles(API_FILE)

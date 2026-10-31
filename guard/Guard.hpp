@@ -27,7 +27,6 @@
 SFL_GUARD_START
 template <typename T>
 concept GuardTConcept = 
-    std::movable<T> &&
     requires(T t) {
         t.GuardConstructor();
         t.GuardDestructor();
@@ -52,8 +51,21 @@ public:
      */
     ~Guard();
 private:
-    const T& m_owner;
+    T& m_owner;
 };
 SFL_GUARD_END
+
+//实现部分
+
+template <SFL_GUARD GuardTConcept T>
+SFL_GUARD Guard<T>::Guard(T& owner)
+: m_owner(owner) {
+    m_owner.GuardConstructor();
+}
+
+template <SFL_GUARD GuardTConcept T>
+SFL_GUARD Guard<T>::~Guard() {
+    m_owner.GuardDestructor();
+}
 
 #endif

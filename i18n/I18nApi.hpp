@@ -33,10 +33,12 @@
 	#error "Error: Must define SFL_LANG_IMPORT or SFL_LANG_EXPORT"
 #endif
 
-#define SFL_I18N_START SFL_START \
-					   namespace I18n {
-#define SFL_I18N_END SFL_END \
-					 }
+#define SFL_I18N_START \
+	SFL_START          \
+	namespace I18n {
+#define SFL_I18N_END \
+	}                \
+	SFL_END
 #define SFL_I18N SFL I18n::
 
 #endif

@@ -37,16 +37,12 @@
 	#include <TargetConditionals.h>
 	#define SFL_APPLE 1
 	#if TARGET_OS_IPHONE
-		#define SFL_IOS 1
+		#error "Unsupported platform"
 	#else
 		#define SFL_MAC 1
 	#endif
 #elif defined(__linux__)
 	#define SFL_LINUX 1
-#elif defined(__FreeBSD__)
-	#define SFL_FREEBSD 1
-#elif defined(__EMSCRIPTEN__)
-	#define SFL_WASM 1
 #else
 	#error "Unsupported platform"
 #endif
@@ -56,7 +52,11 @@
 #elif defined(__cplusplus)
 	#define SFL_CPLUSPLUS __cplusplus
 #else
-	#define SFL_CPLUSPLUS 0L
+	#error "Must use C++ to compile"
+#endif
+
+#if SFL_CPLUSPLUS < 202002L
+	#error "Must use C++20 or more to compile"
 #endif
 
 #if defined(_MSC_VER)
@@ -72,6 +72,10 @@
 	#define SFL_GNU_MAJOR __GNUC__
 	#define SFL_GNU_MINOR __GNUC_MINOR__
 	#define SFL_GNU_PATCH __GNUC_PATCHLEVEL__
+#endif
+
+#if defined(SFL_MSVC)
+	#pragma warning(disable: 4251)
 #endif
 
 #if defined(SFL_STATIC) && defined(SFL_SHARED)
@@ -106,6 +110,7 @@
 // ---- SFL_DEPRECATED(msg):标记废弃 ----
 #if SFL_CPLUSPLUS >= 201402L
 	#define SFL_DEPRECATED(msg) [[deprecated(msg)]]
+// 余下是兜底，实际永远不可到达
 #elif defined(SFL_MSVC)
 	#define SFL_DEPRECATED(msg) __declspec(deprecated(msg))
 #elif defined(SFL_GNU) || defined(SFL_CLANG)
@@ -117,6 +122,7 @@
 // ---- SFL_NODISCARD:忽略返回值时警告 ----
 #if SFL_CPLUSPLUS >= 201703L
 	#define SFL_NODISCARD [[nodiscard]]
+// 余下是兜底，实际永远不可到达
 #elif defined(SFL_GNU) || defined(SFL_CLANG)
 	#define SFL_NODISCARD __attribute__((warn_unused_result))
 #elif defined(SFL_MSVC) && SFL_MSVC_VER >= 1700

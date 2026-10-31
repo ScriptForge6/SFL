@@ -29,15 +29,12 @@
 #define NOMINMAX
 #endif
 #include <windows.h>
-#elif defined(SFL_APPLE)
+#elif defined(SFL_MAC)
 #include <mach-o/dyld.h>
 #include <vector>
-#elif defined(SFL_LINUX) || defined(SFL_WASM)
+#elif defined(SFL_LINUX)
 #include <sys/types.h>
 #include <unistd.h>
-#elif defined(SFL_FREEBSD)
-#include <sys/types.h>
-#include <sys/sysctl.h>
 #endif
 
 namespace {
@@ -86,7 +83,7 @@ std::filesystem::path getExePath() {
     }
     result = buf;
 
-#elif defined(SFL_APPLE)
+#elif defined(SFL_MAC)
     uint32_t size = 0;
     _NSGetExecutablePath(nullptr, &size);               // 先问需要多大
     std::vector<char> buf(size);
@@ -94,7 +91,7 @@ std::filesystem::path getExePath() {
         SFL_EXEPATH_INTERNAL_FAIL("_NSGetExecutablePath failed", tooLong());
     result = buf.data();
 
-#elif defined(SFL_LINUX) || defined(SFL_WASM)
+#elif defined(SFL_LINUX)
     std::string buf(256, '\0');
     for (;;) {
         ssize_t n = readlink("/proc/self/exe", buf.data(), buf.size());
@@ -107,15 +104,6 @@ std::filesystem::path getExePath() {
     }
     result = buf;
 
-#elif defined(SFL_FREEBSD)
-    int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1 };
-    size_t len = 0;
-    if (sysctl(mib, 4, nullptr, &len, nullptr, 0) != 0 || len == 0)
-        SFL_EXEPATH_INTERNAL_FAIL("sysctl(KERN_PROC_PATHNAME) failed", lastError());
-    std::string buf(len, '\0');
-    if (sysctl(mib, 4, buf.data(), &len, nullptr, 0) != 0)
-        SFL_EXEPATH_INTERNAL_FAIL("sysctl(KERN_PROC_PATHNAME) failed", lastError());
-    result = buf.c_str();
 #endif
 
     std::error_code ec;

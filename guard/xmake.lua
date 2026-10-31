@@ -14,13 +14,12 @@ limitations under the License.
 includes("../define.lua")
 
 target(GUARD_NAME)
-	set_kind(LIBRARY_KIND)
+	set_kind("headeronly")
 
     add_defines("SFL_GUARD_EXPORT")
     add_defines(LIBRARY_DEFINE)
 
     add_includedirs(GUARD_DIR, {public = true})
     
-    add_files(path.join(GUARD_DIR, "*.cpp"))
     add_headerfiles(path.join(GUARD_DIR, "*.hpp"))
 target_end()

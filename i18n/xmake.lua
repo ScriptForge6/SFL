@@ -16,6 +16,9 @@ includes("../define.lua")
 target(I18N_NAME)
 	set_kind(LIBRARY_KIND)
 
+    add_deps(GUARD_NAME)
+
+    add_defines("SFL_GUARD_IMPORT", {public = true})
     add_defines("SFL_I18N_EXPORT")
     add_defines(LIBRARY_DEFINE)
 
