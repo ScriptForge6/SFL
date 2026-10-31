@@ -2,9 +2,15 @@ name: Compile
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ dev, release ]
   pull_request:
   workflow_dispatch:
+    inputs:
+      mode:
+        description: 构建模式
+        type: choice
+        options: [ release, debug ]
+        default: release
 
 # 同一分支上有新提交时，取消还在跑的旧任务
 concurrency:
@@ -40,8 +46,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y pkg-config libgtk-3-dev libwebkit2gtk-4.1-dev
 
+      # 手动运行时用所选模式；push / PR 没有这个输入，回落到 release
       - name: Configure
-        run: xmake f -c -y
+        run: xmake f -c -y -m ${{ inputs.mode || 'release' }}
 
       - name: Build
         run: xmake -y -v
@@ -49,6 +56,6 @@ jobs:
       - name: Upload build output
         uses: actions/upload-artifact@v4
         with:
-          name: SFL-${{ runner.os }}
+          name: SFL-${{ runner.os }}-${{ inputs.mode || 'release' }}
           path: build/target
           if-no-files-found: error
