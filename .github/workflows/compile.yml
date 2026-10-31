@@ -58,5 +58,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: SFL-${{ runner.os }}-${{ inputs.mode || 'release' }}
-          path: build/output
+          path: build
           if-no-files-found: error
