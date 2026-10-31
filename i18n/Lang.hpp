@@ -49,11 +49,7 @@ public:
         const std::optional<path_t>& dir
             = std::nullopt/* = getExeDir() / LANG*/
     ) noexcept;
-
-    /**
-     * @brief 
-     */
-
+    
     /**
      * @brief 重加载
      */

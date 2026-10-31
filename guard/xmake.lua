@@ -17,7 +17,6 @@ target(GUARD_NAME)
 	set_kind("headeronly")
 
     add_defines("SFL_GUARD_EXPORT")
-    add_defines(LIBRARY_DEFINE)
 
     add_includedirs(GUARD_DIR, {public = true})
     

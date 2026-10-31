@@ -17,7 +17,6 @@ LICENSE = "Apache License 2.0"
 START_YEAR = 2026
 AUTHOR = "Scriptforge"
 PROJECTDIR = os.projectdir()
-TARGET_DIR = path.join(PROJECTDIR, "build/target")
 local TARGET_MAIN_FILE = "xmake.lua"
 
 ---
@@ -34,9 +33,20 @@ LIBRARY_DEFINE = has_config("static") and "SFL_STATIC" or "SFL_SHARED"
 rule("basename")
     on_load(function (target)
         -- 规则加载时的配置
-        target:add("basename", target:name() .. "_$(host)_$(mode)_$(arch)")
+        target:add("basename", target:name() .. "_$(plat)_$(mode)_$(arch)")
     end)
 rule_end()
+
+---
+
+BUILD_DIR = path.join(
+    PROJECTDIR,
+    "build/output",
+    "$(plat)",
+    "$(arch)",
+    LIBRARY_KIND,
+    "$(mode)"
+)
 
 ---
 

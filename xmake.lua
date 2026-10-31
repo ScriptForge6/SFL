@@ -31,9 +31,11 @@ add_defines(LIBRARY_DEFINE)
 
 set_languages("c++20")
 set_warnings("allextra")
-set_symbols("debug", "hidden")
+if is_mode("debug") then
+    set_symbols("debug", "hidden")
+end
 
-set_targetdir(TARGET_DIR)
+set_targetdir(BUILD_DIR)
 
 add_cxxflags({
     "/permissive-",

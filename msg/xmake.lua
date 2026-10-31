@@ -20,7 +20,6 @@ target(MSG_NAME)
 
     add_defines("SFL_I18N_IMPORT")
     add_defines("SFL_MSG_EXPORT")
-    add_defines(LIBRARY_DEFINE)
 
     add_includedirs(MSG_DIR, {public = true})
     
