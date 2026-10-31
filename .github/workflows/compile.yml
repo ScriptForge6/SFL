@@ -2,15 +2,20 @@ name: Compile
 
 on:
   push:
-    branches: [ dev, release ]
+    branches: [ release ]
   pull_request:
-  workflow_call:
   workflow_dispatch:
     inputs:
       mode:
         description: 构建模式
         type: choice
         options: [ release, debug ]
+        default: release
+  workflow_call:
+    inputs:
+      mode:
+        description: 构建模式
+        type: string
         default: release
 
 # 同一分支上有新提交时，取消还在跑的旧任务
