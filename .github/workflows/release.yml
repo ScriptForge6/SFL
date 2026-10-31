@@ -32,10 +32,11 @@ jobs:
         run: |
           $targetDir = "./build/output"
           $allowedExtensions = @(
-            ".dll", ".pdb", ".exe",
-            ".so", ".dylib",
-            ".a", ".lib",
-            ".h", ".hpp",
+            ".dll",
+            ".pdb",
+            ".exe",
+            ".so",
+            ".dylib",
             ""
           )
 
