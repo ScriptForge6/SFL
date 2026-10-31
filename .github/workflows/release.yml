@@ -8,8 +8,6 @@ on:
 jobs:
   build:
     uses: ./.github/workflows/compile.yml
-    with:
-      mode: release
 
   publish:
     needs: build            # 等 build 整个跑完才开始
