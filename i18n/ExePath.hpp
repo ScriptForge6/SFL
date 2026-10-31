@@ -18,12 +18,14 @@
  */
 
 #pragma once
-#ifndef KIRA_COMPILER_EXEPATH_HPP
-#define KIRA_COMPILER_EXEPATH_HPP
+#ifndef SFL_EXEPATH_HPP
+#define SFL_EXEPATH_HPP
+#include "I18nApi.hpp"
 
 #include <filesystem>
 #include <optional>
 
+SFL_I18N_START
 /**
  * @brief 获取可执行文件地址
  * @return 返回可执行文件地址
@@ -37,5 +39,6 @@ std::filesystem::path getExePath();
  * @retval std::nullopt 出现错误
 */
 std::filesystem::path getExeDir();
+SFL_I18N_END
 
 #endif

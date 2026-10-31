@@ -10,29 +10,27 @@
 // limitations under the License.
 
 /**
- * @file LangApi.hpp
- * @brief 定义了一些宏
+ * @file Msg.cpp
+ * @brief 实现了信息类
  * @author Scriptforge
- * @date 2026/10/23
+ * @date 2026/10/30
  */
 
-#pragma once
-#include <SFLApi.hpp>
+#include "Msg.hpp"
 
-#ifndef SFL_LANGAPI_HPP
-#define SFL_LANGAPI_HPP
+SFL_MSG Msg::Msg(
+    std::string_view key,
+    std::vector<std::string_view> args/* = {}*/
+) {
+    try {
+        m_key = key;
+        m_args.reserve(args.size()); // 提前预留空间
 
-#ifndef SFL_API_LANG
-#if defined(SFL_LANG_IMPORT) && defined(SFL_LANG_EXPORT)
-#error "Error: Only one of SFL_LANG_IMPORT and SFL_LANG_EXPORT may be defined"
-#endif
-	#if defined(SFL_LANG_IMPORT)
-		#define SFL_API_LANG SFL_IMPORT_API
-	#elif defined(SFL_LANG_EXPORT)
-		#define SFL_API_LANG SFL_EXPORT_API
-#else
-#error "Error: Must define SFL_LANG_IMPORT or SFL_LANG_EXPORT"
-	#endif
-#endif
-
-#endif
+        for (auto arg : args) {
+            m_args.emplace_back(arg);// 显式逐个构造
+        }
+    }
+    catch (...) {
+        m_lazyLoadExceptPtr = std::current_exception();
+    }
+}

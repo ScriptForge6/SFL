@@ -17,6 +17,7 @@ LICENSE = "Apache License 2.0"
 START_YEAR = 2026
 AUTHOR = "Scriptforge"
 PROJECTDIR = os.projectdir()
+TARGET_DIR = path.join(PROJECTDIR, "build/target")
 local TARGET_MAIN_FILE = "xmake.lua"
 
 ---
@@ -30,6 +31,13 @@ option_end()
 LIBRARY_KIND = has_config("static") and "static" or "shared"
 LIBRARY_DEFINE = has_config("static") and "SFL_STATIC" or "SFL_SHARED"
 
+rule("basename")
+    on_load(function (target)
+        -- 规则加载时的配置
+        target:add("basename", target:name() .. "_$(host)_$(mode)_$(arch)")
+    end)
+rule_end()
+
 ---
 
 THIRDPARTY_DIR = path.join(PROJECTDIR, "thirdParty")
@@ -42,6 +50,10 @@ API_NAME = "SFLApi.hpp"
 API_FILE = path.join(PROJECTDIR, API_NAME)
 
 WEBVIEW_LUA = path.join(PROJECTDIR, "webview.lua")
+
+GUARD_NAME = "guard"
+GUARD_DIR = path.join(PROJECTDIR, GUARD_NAME)
+GUARD_LUA = path.join(GUARD_DIR, TARGET_MAIN_FILE)
 
 MSG_NAME = "msg"
 MSG_DIR = path.join(PROJECTDIR, MSG_NAME)

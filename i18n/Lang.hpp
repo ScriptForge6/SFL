@@ -17,24 +17,24 @@
  */
 
 #pragma once
-#ifndef KIRA_COMPILER_LANG_HPP
-#define KIRA_COMPILER_LANG_HPP
-#include "LangApi.hpp"
+#ifndef SFL_LANG_HPP
+#define SFL_LANG_HPP
+#include "I18nApi.hpp"
 
 #include <exception>
 #include <filesystem>
-#include <memory>
 #include <optional>
 #include <string>
 #include <string_view>
 
-#include <nlohmann/json.hpp>
+//#include <nlohmann/json.hpp>
 
+SFL_I18N_START
 /**
  * @brief i18n 类
  * @note 非线程安全
  */
-class KIRA_API_LANG Lang {
+class SFL_API_LANG Lang {
 private:
     using path_t = std::filesystem::path;
 public:
@@ -51,14 +51,34 @@ public:
     ) noexcept;
 
     /**
+     * @brief 
+     */
+
+    /**
      * @brief 重加载
      */
-    void reload();
+    auto reload() -> void;
+
+    /**
+     * @brief 验证函数（验证是否有包含的异常）
+     */
+    auto validate() -> bool;
+
+    /**
+     * @brief 验证函数（在 Guard 类使用）
+     */
+    auto GuardConstructor() -> void;
+
+    /**
+     * @brief 验证函数（在 Guard 类使用）
+     */
+    auto GuardDestructor() -> void;
 private:
     std::exception_ptr m_lazyLoadExceptPtr = nullptr;
     std::string m_langCode;
     path_t m_dir;
-    nlohmann::json m_json;
+    //nlohmann::json m_json;
 };
+SFL_I18N_END
 
 #endif

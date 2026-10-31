@@ -1,4 +1,5 @@
 {
     "C_Cpp.default.compileCommands": "${workspaceFolder}/.vscode/compile_commands.json",
-    "C_Cpp.errorSquiggles": "disabled"
+    "C_Cpp.errorSquiggles": "disabled",
+    "cmake.sourceDirectory": "E:/Projects/repos/SFL/thirdParty/webview"
 }

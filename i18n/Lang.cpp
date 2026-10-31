@@ -18,15 +18,19 @@
 
 #include "Lang.hpp"
 
+#include <Guard.hpp>
+
 #include "ExePath.hpp"
 
-Lang::Lang(
+#define SFL_LANG_INTERNAL_GUARD SFL_GUARD Guard r_guard(*this)
+
+SFL_I18N Lang::Lang(
     std::string_view langCode,
     const std::optional<path_t>& dir/* = std::nullopt*/
-) noexcept
-    : m_langCode(langCode) {
+) noexcept {
     try {
-        m_dir = dir ? *dir : getExeDir() / LANG;
+        m_langCode = langCode;
+        m_dir = dir ? *dir : SFL_I18N getExeDir() / "lang";//TODO: LANG
         reload();
     }
     catch (...) {
@@ -34,6 +38,19 @@ Lang::Lang(
     }
 }
 
-void Lang::reload() {
+auto SFL_I18N Lang::reload() -> void {
+}
 
+auto SFL_I18N Lang::validate() -> bool {
+    return static_cast<bool>(m_lazyLoadExceptPtr);
+}
+
+auto SFL_I18N Lang::GuardConstructor() -> void {
+    if (validate()) {
+        std::rethrow_exception(m_lazyLoadExceptPtr);
+    }
+}
+
+auto SFL_I18N Lang::GuardDestructor() -> void {
+    return;
 }

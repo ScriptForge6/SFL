@@ -21,11 +21,11 @@ add_defines(string.format("LICENSE=\"%s\"", LICENSE))
 add_defines(string.format("START_YEAR=%d", START_YEAR))
 add_defines(string.format("AUTHOR=\"%s\"", AUTHOR))
 
-add_rules("mode.debug", "mode.release")
+add_rules("basename")
 
 set_policy("package.install_locally", true)
 
-set_defaultmode("mode.debug")
+set_defaultmode("debug")
 
 add_defines(LIBRARY_DEFINE)
 
@@ -33,16 +33,23 @@ set_languages("c++20")
 set_warnings("allextra")
 set_symbols("debug", "hidden")
 
+set_targetdir(TARGET_DIR)
+
 add_cxxflags({
     "/permissive-",
     "/Zc:preprocessor",
     "/Zc:templateScope"
 }, {tools = {"cl"}})
 
+if is_plat("linux") then
+    add_rpathdirs("$ORIGIN", {public = true})
+end
+
 add_includedirs(PROJECTDIR)
 add_headerfiles(API_FILE)
 
+includes(GUARD_LUA)
 includes(I18N_LUA)
---TODO: includes(MSG_LUA)
+includes(MSG_LUA)
 includes(WEBVIEW_LUA)
 includes(MAIN_LUA)

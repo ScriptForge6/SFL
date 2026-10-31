@@ -20,22 +20,29 @@
 #ifndef SFL_SFLAPI_HPP
 #define SFL_SFLAPI_HPP
 
+#define SFL_START namespace Sfl {
+#define SFL_END }
+#define SFL ::Sfl::
+
+#define SFL_STRINGIFY2_(x) #x
+#define SFL_STRINGIFY_(x)  SFL_STRINGIFY2_(x)
+
+#include <stdexcept>
+#define SFL_TODO(msg) \
+		throw std::logic_error(__FILE__ "(" SFL_STRINGIFY_(__LINE__) "): TODO: " msg)
+
 #if defined(_WIN32) || defined(_WIN64)
 	#define SFL_WIN 1
 #elif defined(__APPLE__)
 	#include <TargetConditionals.h>
 	#define SFL_APPLE 1
 	#if TARGET_OS_IPHONE
-		#define SFL_IOS 1
+		#error "Unsupported platform"
 	#else
 		#define SFL_MAC 1
 	#endif
 #elif defined(__linux__)
 	#define SFL_LINUX 1
-#elif defined(__FreeBSD__)
-	#define SFL_FREEBSD 1
-#elif defined(__EMSCRIPTEN__)
-	#define SFL_WASM 1
 #else
 	#error "Unsupported platform"
 #endif
@@ -45,7 +52,11 @@
 #elif defined(__cplusplus)
 	#define SFL_CPLUSPLUS __cplusplus
 #else
-	#define SFL_CPLUSPLUS 0L
+	#error "Must use C++ to compile"
+#endif
+
+#if SFL_CPLUSPLUS < 202002L
+	#error "Must use C++20 or more to compile"
 #endif
 
 #if defined(_MSC_VER)
@@ -63,34 +74,43 @@
 	#define SFL_GNU_PATCH __GNUC_PATCHLEVEL__
 #endif
 
+#if defined(SFL_MSVC)
+	#pragma warning(disable: 4251)
+#endif
 
-#ifndef SFL_IMPORT_API
-	#if defined(SFL_STATIC)
-		#define SFL_IMPORT_API
+#if defined(SFL_STATIC) && defined(SFL_SHARED)
+	#error "SFL_STATIC and SFL_SHARED cannot both be defined"
+#endif
+
+#if !defined(SFL_STATIC) && !defined(SFL_SHARED)
+	#error "SFL_STATIC and SFL_SHARED must be defined one"
+#endif
+
+
+#if defined(SFL_STATIC)
+	#define SFL_IMPORT_API
+#else
+	#if defined(SFL_WIN)
+		#define SFL_IMPORT_API __declspec(dllimport)
 	#else
-		#if defined(SFL_WIN)
-			#define SFL_IMPORT_API __declspec(dllimport)
-		#else
-			#define SFL_IMPORT_API
-		#endif
+		#define SFL_IMPORT_API
 	#endif
 #endif
 
-#ifndef SFL_EXPORT_API
-	#if defined(SFL_STATIC)
-		#define SFL_EXPORT_API
+#if defined(SFL_STATIC)
+	#define SFL_EXPORT_API
+#else
+	#if defined(SFL_WIN)
+		#define SFL_EXPORT_API __declspec(dllexport)
 	#else
-		#if defined(SFL_WIN)
-			#define SFL_EXPORT_API __declspec(dllexport)
-		#else
-			#define SFL_EXPORT_API __attribute__((visibility("default")))
-		#endif
+		#define SFL_EXPORT_API __attribute__((visibility("default")))
 	#endif
 #endif
 
 // ---- SFL_DEPRECATED(msg):标记废弃 ----
 #if SFL_CPLUSPLUS >= 201402L
 	#define SFL_DEPRECATED(msg) [[deprecated(msg)]]
+// 余下是兜底，实际永远不可到达
 #elif defined(SFL_MSVC)
 	#define SFL_DEPRECATED(msg) __declspec(deprecated(msg))
 #elif defined(SFL_GNU) || defined(SFL_CLANG)
@@ -102,6 +122,7 @@
 // ---- SFL_NODISCARD:忽略返回值时警告 ----
 #if SFL_CPLUSPLUS >= 201703L
 	#define SFL_NODISCARD [[nodiscard]]
+// 余下是兜底，实际永远不可到达
 #elif defined(SFL_GNU) || defined(SFL_CLANG)
 	#define SFL_NODISCARD __attribute__((warn_unused_result))
 #elif defined(SFL_MSVC) && SFL_MSVC_VER >= 1700
@@ -110,13 +131,4 @@
 #else
 	#define SFL_NODISCARD
 #endif
-
-#if defined(SFL_STATIC) && defined(SFL_SHARED)
-	#error "SFL_STATIC and SFL_SHARED cannot both be defined"
-#endif
-
-#if !defined(SFL_STATIC) && !defined(SFL_SHARED)
-	#error "SFL_STATIC and SFL_SHARED must be defined one"
-#endif
-
 #endif
