@@ -57,36 +57,24 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y pkg-config libgtk-3-dev libwebkit2gtk-4.1-dev
 
-      # ==========================
       # Shared Build
-      # ==========================
-
       - name: Configure Shared
         run: xmake f -c -y -m ${{ inputs.mode || 'release' }}
 
       - name: Build Shared
         run: xmake -y -v
 
-      - name: Upload Shared
-        uses: actions/upload-artifact@v4
-        with:
-          name: SFL-${{ runner.os }}-Shared-${{ inputs.mode || 'release' }}
-          path: build
-          if-no-files-found: error
-
-      # ==========================
       # Static Build
-      # ==========================
-
       - name: Configure Static
         run: xmake f --static=y -c -y -m ${{ inputs.mode || 'release' }}
 
       - name: Build Static
         run: xmake -y -v
 
-      - name: Upload Static
+      # Shared 和 Static 分别输出到 build/output 下的独立目录
+      - name: Upload build output
         uses: actions/upload-artifact@v4
         with:
-          name: SFL-${{ runner.os }}-Static-${{ inputs.mode || 'release' }}
-          path: build
+          name: SFL-${{ runner.os }}-${{ inputs.mode || 'release' }}
+          path: build/output
           if-no-files-found: error

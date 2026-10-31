@@ -3,47 +3,67 @@ name: Release
 on:
   push:
     tags: [ 'v*' ]
+
   workflow_dispatch:
 
 jobs:
   build:
     uses: ./.github/workflows/compile.yml
+    with:
+      mode: release
 
   publish:
-    needs: build            # 等 build 整个跑完才开始
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
     steps:
-      - uses: actions/download-artifact@v4
+      # 将各平台 Artifact 合并到 build/output。
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
         with:
-          path: build
+          path: build/output
+          pattern: SFL-*-release
+          merge-multiple: true
+
       - name: Delete compilation intermediate files
         shell: pwsh
-        run : |
-          $targetDir = "./build"
-          $allowedExtensions = @(".dll", ".pdb", ".exe", ".so", "")
-          
+        run: |
+          $targetDir = "./build/output"
+          $allowedExtensions = @(
+            ".dll", ".pdb", ".exe",
+            ".so", ".dylib",
+            ".a", ".lib",
+            ".h", ".hpp",
+            ""
+          )
+
           Get-ChildItem -Path $targetDir -File -Recurse | ForEach-Object {
-            if ($allowedExtensions -contains $_.Extension) {
+            if ($allowedExtensions -contains $_.Extension.ToLowerInvariant()) {
               Write-Host "Keep: $($_.Name)" -ForegroundColor Green
             } else {
               Write-Host "Delete: $($_.FullName)" -ForegroundColor Red
               Remove-Item -Path $_.FullName -Force
             }
           }
+
       - name: Compress artifacts
         shell: pwsh
         run: |
           $destDir = "./dist"
-          
-          # 如果目标目录不存在，自动创建它
+
           if (-not (Test-Path $destDir)) {
             New-Item -Path $destDir -ItemType Directory | Out-Null
           }
 
-          $outputBase = "./build"
-          $releaseDirs = Get-ChildItem -Path $outputBase -Recurse -Directory | Where-Object { $_.Name -eq 'release' }
+          $outputBase = "./build/output"
+          $releaseDirs = Get-ChildItem -Path $outputBase -Recurse -Directory |
+            Where-Object { $_.Name -eq 'release' }
+
+          if (-not $releaseDirs) {
+            throw "No release output directories found in $outputBase"
+          }
 
           foreach ($dir in $releaseDirs) {
             $libraryKind = $dir.Parent.Name
@@ -51,22 +71,17 @@ jobs:
             $plat        = $dir.Parent.Parent.Parent.Name
 
             $archiveBase = "SFL_${libraryKind}_${plat}_${arch}"
-              
-            # 2. 直接将路径指向特定目录
-            $zipFile     = Join-Path $destDir "$archiveBase.zip"
-            $tarFile     = Join-Path $destDir "$archiveBase.tar.gz"
+
+            $zipFile = Join-Path $destDir "$archiveBase.zip"
+            $tarFile = Join-Path $destDir "$archiveBase.tar.gz"
 
             Write-Host "----------------------------------------"
-            Write-Host "Package directly to $destDir : $archiveBase" -ForegroundColor Cyan
+            Write-Host "Package: $archiveBase" -ForegroundColor Cyan
 
-            # 生成 .zip 到特定目录
             Compress-Archive -Path "$($dir.FullName)/*" -DestinationPath $zipFile -Force
-              
-            # 生成 .tar.gz 到特定目录
             tar -czvf $tarFile -C $dir.FullName .
           }
 
-          
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
