@@ -20,7 +20,6 @@ target(I18N_NAME)
 
     add_defines("SFL_GUARD_IMPORT", {public = true})
     add_defines("SFL_I18N_EXPORT")
-    add_defines(LIBRARY_DEFINE)
 
     add_includedirs(I18N_DIR, {public = true})
     

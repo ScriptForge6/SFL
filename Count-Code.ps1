@@ -31,7 +31,7 @@
 [CmdletBinding()]
 param(
     [string]$Path = ".",
-    [string[]]$Extension = @(".ixx", ".cpp", ".h", ".hpp", ".lua", ".ps1", ".sh"),
+    [string[]]$Extension = @(".ixx", ".cpp", ".h", ".hpp", ".lua", ".ps1", ".sh", ".json", ".yml"),
     [string[]]$ExcludeDir = @('.git', '.vs', 'bin', 'obj', 'build', '.xmake', 'node_modules', 'thirdParty'),  # 仅在非 git 仓库时生效
     [string[]]$ExcludePath = @(),      # git 模式下额外排除的路径片段，例如 -ExcludePath thirdParty/webview2
     [switch]$IncludeSubmodules,        # 统计子模块内的文件
