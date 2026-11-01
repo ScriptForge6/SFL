@@ -32,13 +32,19 @@ permissions:
 
 jobs:
   build:
-    name: Build (${{ matrix.os }})
+    name: Build (${{ matrix.name }})
     runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-latest, ubuntu-latest, macos-latest ]
+        include:
+          # archflag 会原样拼进 xmake f；留空表示用运行器本机架构
+          - { name: windows-x64, os: windows-latest,   archflag: '' }
+          - { name: windows-x86, os: windows-latest,   archflag: '-a x86' }   # x64 运行器上交叉编译 x86
+          - { name: linux-x64,   os: ubuntu-latest,    archflag: '' }
+          - { name: linux-arm64, os: ubuntu-24.04-arm, archflag: '' }         # 原生 arm64 运行器
+          - { name: macos-arm64, os: macos-latest,     archflag: '' }
 
     steps:
       - name: Checkout
@@ -59,22 +65,23 @@ jobs:
 
       # Shared Build
       - name: Configure Shared
-        run: xmake f -c -y -m ${{ inputs.mode || 'release' }}
+        run: xmake f -c -y -m ${{ inputs.mode || 'release' }} ${{ matrix.archflag }}
 
       - name: Build Shared
         run: xmake -y -v
 
       # Static Build
       - name: Configure Static
-        run: xmake f --static=y -c -y -m ${{ inputs.mode || 'release' }}
+        run: xmake f --static=y -c -y -m ${{ inputs.mode || 'release' }} ${{ matrix.archflag }}
 
       - name: Build Static
         run: xmake -y -v
 
       # Shared 和 Static 分别输出到 build/output 下的独立目录
+      # 产物名必须唯一：windows-x64 和 windows-x86 的 runner.os 相同，所以改用 matrix.name
       - name: Upload build output
         uses: actions/upload-artifact@v4
         with:
-          name: SFL-${{ runner.os }}-${{ inputs.mode || 'release' }}
+          name: SFL-${{ matrix.name }}-${{ inputs.mode || 'release' }}
           path: build/output
           if-no-files-found: error
