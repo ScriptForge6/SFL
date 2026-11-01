@@ -32,8 +32,9 @@ add_defines(LIBRARY_DEFINE)
 
 set_languages("c++20")
 set_warnings("allextra")
+set_symbols("hidden")
 if is_mode("debug") then
-    set_symbols("debug", "hidden")
+    set_symbols("debug")
 end
 
 set_targetdir(BUILD_DIR)
