@@ -18,11 +18,15 @@ target(I18N_NAME)
 
     add_deps(GUARD_NAME)
 
+    add_defines("LANG=\"" .. LANG_DEFINE .. "\"", {public = true})
     add_defines("SFL_GUARD_IMPORT", {public = true})
     add_defines("SFL_I18N_EXPORT")
+
+    add_packages("nlohmann_json", {public = true})
 
     add_includedirs(I18N_DIR, {public = true})
     
     add_files(path.join(I18N_DIR, "*.cpp"))
+    add_files(path.join(I18N_DIR, "detail", "*.cpp"))
     add_headerfiles(path.join(I18N_DIR, "*.hpp"))
 target_end()

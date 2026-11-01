@@ -37,33 +37,7 @@
 #include <unistd.h>
 #endif
 
-namespace {
-
-// i18n 不能依赖 msg（msg 依赖 i18n），所以这里只抛标准库异常。
-// 所有失败都是运行环境导致的，统一抛 std::system_error，
-// what() 为英文说明加系统错误信息，本地化由上层处理。
-[[noreturn]] void fail(const std::string& what, std::error_code ec) {
-    throw std::system_error(ec, what);
-}
-
-// 辅助宏：自动组合 [FILE: LINE] 格式
-#define SFL_EXEPATH_INTERNAL_FAIL(msg, ec) fail(std::string("[") + __FILE__ + ":" + std::to_string(__LINE__) + "] " + (msg), (ec))
-
-// 必须在系统调用失败后立刻求值，中间不能插入其他系统调用。
-[[maybe_unused]] std::error_code lastError() {
-#if defined(SFL_WIN)
-    return { static_cast<int>(GetLastError()), std::system_category() };
-#else
-    return { errno, std::generic_category() };
-#endif
-}
-
-// 路径过长没有系统错误码，使用标准的 errc。
-[[maybe_unused]] std::error_code tooLong() {
-    return std::make_error_code(std::errc::filename_too_long);
-}
-
-} // namespace
+#include "ThrowWithoutMsg.hpp"
 
 SFL_I18N_START
 std::filesystem::path getExePath() {
@@ -75,10 +49,10 @@ std::filesystem::path getExePath() {
     for (;;) {
         DWORD n = GetModuleFileNameW(nullptr, buf.data(), static_cast<DWORD>(buf.size()));
         if (n == 0)
-            SFL_EXEPATH_INTERNAL_FAIL("GetModuleFileNameW failed", lastError());
+            SFL_I18N failSystem("GetModuleFileNameW failed", SFL_I18N lastError());
         if (n < buf.size()) { buf.resize(n); break; }   // 成功
         if (buf.size() > 32768)
-            SFL_EXEPATH_INTERNAL_FAIL("executable path too long", tooLong()); // 防止无限扩容
+            SFL_I18N failSystem("executable path too long", SFL_I18N tooLong()); // 防止无限扩容
         buf.resize(buf.size() * 2);                     // 被截断，重试
     }
     result = buf;
@@ -88,7 +62,7 @@ std::filesystem::path getExePath() {
     _NSGetExecutablePath(nullptr, &size);               // 先问需要多大
     std::vector<char> buf(size);
     if (_NSGetExecutablePath(buf.data(), &size) != 0)   // 失败只表示缓冲区不够，没有 errno
-        SFL_EXEPATH_INTERNAL_FAIL("_NSGetExecutablePath failed", tooLong());
+        SFL_I18N failSystem("_NSGetExecutablePath failed", SFL_I18N tooLong());
     result = buf.data();
 
 #elif defined(SFL_LINUX)
@@ -96,10 +70,10 @@ std::filesystem::path getExePath() {
     for (;;) {
         ssize_t n = readlink("/proc/self/exe", buf.data(), buf.size());
         if (n < 0)
-            SFL_EXEPATH_INTERNAL_FAIL("readlink(/proc/self/exe) failed", lastError());
+            SFL_I18N failSystem("readlink(/proc/self/exe) failed", SFL_I18N lastError());
         if (static_cast<size_t>(n) < buf.size()) { buf.resize(static_cast<size_t>(n)); break; }
         if (buf.size() > 65536)
-            SFL_EXEPATH_INTERNAL_FAIL("executable path too long", tooLong());
+            SFL_I18N failSystem("executable path too long", SFL_I18N tooLong());
         buf.resize(buf.size() * 2);                     // readlink 截断时不报错，要自己判断
     }
     result = buf;

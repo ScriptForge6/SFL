@@ -20,9 +20,10 @@
 
 #include <Guard.hpp>
 
-#include "ExePath.hpp"
+#include "detail/ExePath.hpp"
 
 #define SFL_LANG_INTERNAL_GUARD SFL_GUARD Guard r_guard(*this)
+
 
 SFL_I18N Lang::Lang(
     std::string_view langCode,
@@ -30,7 +31,7 @@ SFL_I18N Lang::Lang(
 ) noexcept {
     try {
         m_langCode = langCode;
-        m_dir = dir ? *dir : SFL_I18N getExeDir() / "lang";//TODO: LANG
+        m_dir = dir ? *dir : SFL_I18N getExeDir() / LANG;
         reload();
     }
     catch (...) {
@@ -39,6 +40,7 @@ SFL_I18N Lang::Lang(
 }
 
 auto SFL_I18N Lang::reload() -> void {
+
 }
 
 auto SFL_I18N Lang::validate() -> bool {
