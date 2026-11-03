@@ -70,6 +70,14 @@ public:
      */
     auto GuardDestructor() -> void;
 private:
+    /**
+     * @brief 加载
+     */
+    auto load(
+        std::string_view langCode,
+        const std::optional<path_t>& dir = std::nullopt
+    ) -> void;
+
     std::exception_ptr m_lazyLoadExceptPtr = nullptr;
     std::string m_langCode;
     path_t m_dir;

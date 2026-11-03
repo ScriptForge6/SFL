@@ -30,9 +30,7 @@ SFL_I18N Lang::Lang(
     const std::optional<path_t>& dir/* = std::nullopt*/
 ) noexcept {
     try {
-        m_langCode = langCode;
-        m_dir = dir ? *dir : SFL_I18N getExeDir() / LANG;
-        reload();
+        load(langCode, dir);
     }
     catch (...) {
         m_lazyLoadExceptPtr = std::current_exception();
@@ -40,7 +38,8 @@ SFL_I18N Lang::Lang(
 }
 
 auto SFL_I18N Lang::reload() -> void {
-
+    path_t langFilePath = m_dir / (m_langCode + ".json");
+    //TODO: 加载逻辑
 }
 
 auto SFL_I18N Lang::validate() -> bool {
@@ -55,4 +54,13 @@ auto SFL_I18N Lang::GuardConstructor() -> void {
 
 auto SFL_I18N Lang::GuardDestructor() -> void {
     return;
+}
+
+auto SFL_I18N Lang::load(
+    std::string_view langCode,
+    const std::optional<path_t>& dir = std::nullopt
+) -> void {
+    m_langCode = langCode;
+    m_dir = dir ? *dir : SFL_I18N getExeDir() / LANG;
+    reload();
 }
