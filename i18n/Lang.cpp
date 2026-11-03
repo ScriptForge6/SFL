@@ -37,10 +37,28 @@ SFL_I18N Lang::Lang(
     }
 }
 
+
+auto SFL_I18N Lang::load(
+    std::string_view langCode,
+    const std::optional<path_t>& dir = std::nullopt
+) -> void {
+    m_langCode = langCode;
+    m_dir = dir ? *dir : SFL_I18N getExeDir() / LANG;
+    reload();
+}
+
 auto SFL_I18N Lang::reload() -> void {
     path_t langFilePath = m_dir / (m_langCode + ".json");
+
+
     //TODO: 加载逻辑
 }
+
+
+auto SFL_I18N Lang::checkFileExists() -> bool {
+    return checkFileExistsWithPath(m_dir / (m_langCode + ".json"));
+}
+
 
 auto SFL_I18N Lang::validate() -> bool {
     return static_cast<bool>(m_lazyLoadExceptPtr);
@@ -56,11 +74,7 @@ auto SFL_I18N Lang::GuardDestructor() -> void {
     return;
 }
 
-auto SFL_I18N Lang::load(
-    std::string_view langCode,
-    const std::optional<path_t>& dir = std::nullopt
-) -> void {
-    m_langCode = langCode;
-    m_dir = dir ? *dir : SFL_I18N getExeDir() / LANG;
-    reload();
+
+auto SFL_I18N Lang::checkFileExistsWithPath(const path_t& filePath) -> bool {
+    return std::filesystem::exists(filePath);
 }

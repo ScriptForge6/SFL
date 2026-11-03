@@ -38,6 +38,13 @@
         "[" + std::string(loc.file_name()) + ": " + std::to_string(loc.line()) + "]" + what);
 }
 
+[[noreturn]] auto SFL_I18N failRuntime(
+    const std::string& what,
+    std::source_location loc/* = std::source_location::current()*/) -> void {
+    throw std::runtime_error(
+        "[" + std::string(loc.file_name()) + ": " + std::to_string(loc.line()) + "]" + what);
+}
+
 SFL_NODISCARD auto SFL_I18N lastError() -> std::error_code {
 #if defined(SFL_WIN)
     return { static_cast<int>(GetLastError()), std::system_category() };

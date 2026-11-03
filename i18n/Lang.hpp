@@ -50,10 +50,26 @@ public:
             = std::nullopt/* = getExeDir() / LANG*/
     ) noexcept;
     
+
+    /**
+     * @brief 加载
+     */
+    auto load(
+        std::string_view langCode,
+        const std::optional<path_t>& dir = std::nullopt
+    ) -> void;
+
     /**
      * @brief 重加载
      */
     auto reload() -> void;
+
+
+    /** 
+     * @brief 检查文件是否存在
+     */
+    auto checkFileExists() -> bool;
+
 
     /**
      * @brief 验证函数（验证是否有包含的异常）
@@ -71,12 +87,10 @@ public:
     auto GuardDestructor() -> void;
 private:
     /**
-     * @brief 加载
+     * @brief 检查文件是否存在（接受参数）
      */
-    auto load(
-        std::string_view langCode,
-        const std::optional<path_t>& dir = std::nullopt
-    ) -> void;
+    auto checkFileExistsWithPath(const path_t& filePath) -> bool;
+
 
     std::exception_ptr m_lazyLoadExceptPtr = nullptr;
     std::string m_langCode;

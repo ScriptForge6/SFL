@@ -31,6 +31,10 @@ SFL_I18N_START
     std::error_code ec,
     std::source_location loc = std::source_location::current()) -> void;
 
+[[noreturn]] auto failRuntime(
+    const std::string& what,
+    std::source_location loc = std::source_location::current()) -> void;
+
 SFL_NODISCARD auto lastError() -> std::error_code;
 SFL_NODISCARD auto tooLong() -> std::error_code;
 SFL_I18N_END
