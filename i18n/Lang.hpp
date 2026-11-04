@@ -87,9 +87,14 @@ public:
     auto GuardDestructor() -> void;
 private:
     /**
-     * @brief 检查文件是否存在（接受参数）
+     * @brief 检查 path 是否存在（接受参数）
      */
-    auto checkFileExistsWithPath(const path_t& filePath) -> bool;
+    auto checkPathExistsWithPath(const path_t& filePath) -> bool;
+
+    /**
+     * @brief 检查文件是否为常规文件（接受参数）
+     */
+    auto checkFileIsRegular(const path_t& filePath) -> bool;
 
 
     std::exception_ptr m_lazyLoadExceptPtr = nullptr;

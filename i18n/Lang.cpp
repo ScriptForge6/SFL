@@ -49,14 +49,25 @@ auto SFL_I18N Lang::load(
 
 auto SFL_I18N Lang::reload() -> void {
     path_t langFilePath = m_dir / (m_langCode + ".json");
+    if(!checkFileExists()) {
+        SFL_I18N failRuntime("Language file not found: " + langFilePath.string());
+    }
 
+    std::ifstream jsoninput(langFilePath.string());
 
-    //TODO: 加载逻辑
+    if (!jsoninput.is_open()) {
+        SFL_I18N failRuntime("Language file not found: " + langFilePath.string());
+    }
+
+    jsoninput >> m_json;
+    jsoninput.close();
 }
 
 
 auto SFL_I18N Lang::checkFileExists() -> bool {
-    return checkFileExistsWithPath(m_dir / (m_langCode + ".json"));
+    const path_t langFilePath = m_dir / (m_langCode + ".json");
+    return checkFileExistsWithPath(langFilePath) &&
+        checkFileIsRegular(langFilePath);
 }
 
 
@@ -75,6 +86,10 @@ auto SFL_I18N Lang::GuardDestructor() -> void {
 }
 
 
-auto SFL_I18N Lang::checkFileExistsWithPath(const path_t& filePath) -> bool {
+auto SFL_I18N Lang::checkPathExistsWithPath(const path_t& filePath) -> bool {
     return std::filesystem::exists(filePath);
+}
+
+auto SFL_I18N Lang::checkFileIsRegular(const path_t& filePath) -> bool {
+    return std::filesystem::is_regular_file(filePath);
 }
