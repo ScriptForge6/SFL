@@ -30,13 +30,21 @@ SFL_I18N Lang::Lang(
     const std::optional<path_t>& dir/* = std::nullopt*/
 ) noexcept {
     try {
-        load(langCode, dir);
+        m_langCode = langCode;
+        m_dir = dir ? *dir : SFL_I18N getExeDir() / LANG;
     }
     catch (...) {
         m_lazyLoadExceptPtr = std::current_exception();
     }
 }
 
+auto set(
+        std::string_view langCode,
+        const std::optional<path_t>& dir = std::nullopt
+    ) -> void {
+    m_langCode = langCode;
+    m_dir = dir ? *dir : SFL_I18N getExeDir() / LANG;
+}
 
 auto SFL_I18N Lang::load(
     std::string_view langCode,

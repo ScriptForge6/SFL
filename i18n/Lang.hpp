@@ -50,7 +50,14 @@ public:
             = std::nullopt/* = getExeDir() / LANG*/
     ) noexcept;
     
-
+    /**
+     * @brief 设置变量
+     */
+    auto set(
+        std::string_view langCode,
+        const std::optional<path_t>& dir = std::nullopt
+    ) -> void;
+    
     /**
      * @brief 加载
      */
