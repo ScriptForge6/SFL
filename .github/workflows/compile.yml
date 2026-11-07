@@ -5,7 +5,15 @@ on:
     branches: [ release ]
 
   pull_request:
-
+    paths-ignore:
+      - '.vscode/**'
+      - '**.md'
+      - 'LICENSE*'
+      - '.gitignore'
+      - '.gitattributes'
+      - 'Count-Code.ps1'
+      - 'Find-Todo.ps1'
+      
   workflow_dispatch:
     inputs:
       mode:
