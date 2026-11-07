@@ -1,6 +1,10 @@
+<div align="center">
+
 # Contributing Guide / 贡献指南
 
 [English](#english) | [中文](#中文)
+
+</div>
 
 ---
 
@@ -23,6 +27,20 @@ Thank you for your interest in contributing to SFL!
 2. Make your changes. Make sure `xmake` builds successfully without introducing new warnings (the compile GitHub Action check on your PR must pass).
 3. Open a Pull Request against `dev`, explaining what you changed and why.
 4. One PR should do one thing only.
+
+### Branch Naming
+
+Members who push branches directly to this repository should name them `type/username/description`, for example:
+
+```
+feat/ScriptForge666/i18n-basic-dev
+fix/ScriptForge666/lang-file-not-found
+```
+
+- `type` uses the same types as commit messages (`feat`, `fix`, `docs`, `refactor`, `chore`).
+- `username` is your GitHub username, which avoids conflicts when several people work in the same repository.
+- Do not create a branch named exactly `feat`, `fix`, etc., or one named after your username: Git cannot have both `feat` and `feat/xxx`.
+- Contributors working in their own fork are not required to follow this, but it is welcome.
 
 ## Code Style
 
@@ -61,7 +79,13 @@ Thank you for your interest in contributing to SFL!
 
 Suggested format: `type: short description`, e.g. `fix: crash when the language file is missing`
 
-Common types: `feat`, `fix`, `docs`, `refactor`, `chore`
+Common types:
+
+- `feat`: a new feature
+- `fix`: a bug fix
+- `docs`: documentation or comments only
+- `refactor`: restructuring code without changing behavior
+- `chore`: build config, dependencies, scripts, etc.
 
 ## Reporting Issues
 
@@ -92,6 +116,20 @@ By submitting code, you agree to license your contribution under the Apache Lice
 2. 修改代码,确保 `xmake` 能编译通过,且不新增警告(PR 的 compile GitHub Action 检查需通过)
 3. 提交 Pull Request 到 `dev` 分支,说明改了什么、为什么改
 4. 一个 PR 只做一件事
+
+### 分支命名
+
+直接在本仓库推送分支的成员,请使用 `类型/用户名/说明` 的格式,例如:
+
+```
+feat/ScriptForge666/i18n-basic-dev
+fix/ScriptForge666/lang-file-not-found
+```
+
+- `类型` 与提交信息的类型一致(`feat`、`fix`、`docs`、`refactor`、`chore`)。
+- `用户名` 填你的 GitHub 用户名,避免多人在同一仓库开发时冲突。
+- 不要创建名字恰好是 `feat`、`fix` 等的分支,也不要用用户名本身当分支名:Git 里 `feat` 和 `feat/xxx` 不能同时存在。
+- 在自己 fork 中开发的贡献者不强制遵守,但欢迎采用。
 
 ## 代码风格
 
@@ -130,7 +168,13 @@ By submitting code, you agree to license your contribution under the Apache Lice
 
 建议格式:`类型: 简短说明`,例如 `fix: 修复语言文件找不到时的崩溃`
 
-常用类型:`feat`、`fix`、`docs`、`refactor`、`chore`
+常用类型:
+
+- `feat`:新功能
+- `fix`:修复 bug
+- `docs`:只改文档或注释
+- `refactor`:重构,不改变行为
+- `chore`:构建配置、依赖、脚本等杂务
 
 ## 报告问题
 
