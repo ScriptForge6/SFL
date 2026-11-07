@@ -51,7 +51,7 @@ param(
 
     [int]$Context = 2,                       # 匹配行上下各显示几行
     [string[]]$ExcludeDir = @('.git', '.vs', 'bin', 'obj', 'node_modules'),  # 仅在非 git 仓库时生效
-    [string[]]$Extension = @(),              # 可选：只扫描这些扩展名，例如 -Extension .cpp,.hpp,.lua
+    [string[]]$Extension = @('.cpp', '.hpp', '.h', '.c', '.cc', '.cxx', '.lua', '.js', '.ts', '.html', '.css', '.ps1', '.sh'),              # 可选：只扫描这些扩展名，例如 -Extension .cpp,.hpp,.lua
     [switch]$CaseSensitive,                  # 区分大小写
     [string]$OutFile,                        # 结果写入文件（.md/.csv/.json/其他=纯文本）
     [switch]$NoConsole,                      # 只写文件，不在控制台显示

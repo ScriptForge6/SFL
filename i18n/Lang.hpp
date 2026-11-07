@@ -42,7 +42,7 @@ public:
     /**
      * @brief Lang 的构造函数
      * @param[in] langCode 文件名称（使用 ISO-639-1 ）
-     * @param[in] path     文件夹位置
+     * @param[in] dir      文件夹位置
      */
     Lang(
         std::string_view langCode,
@@ -52,12 +52,15 @@ public:
     
     /**
      * @brief 设置变量
+     * @param[in] langCode 文件名称（使用 ISO-639-1 ）
+     * @param[in] dir      文件夹位置
      */
     auto set(
         std::string_view langCode,
-        const std::optional<path_t>& dir = std::nullopt
+        const std::optional<path_t>& dir
+            = std::nullopt/* = getExeDir() / LANG*/
     ) -> void;
-    
+
     /**
      * @brief 加载
      */
@@ -75,33 +78,52 @@ public:
     /** 
      * @brief 检查文件是否存在
      */
-    auto checkFileExists() -> bool;
+    SFL_NODISCARD auto checkFileExists() const -> bool;
+
+    /** 
+     * @brief 获取文件夹
+     */
+    SFL_NODISCARD auto getDir() const -> const path_t&;
+
+    /** 
+     * @brief 获取字母代码
+     */
+    SFL_NODISCARD auto getLangCode() const -> const std::string&;
+
+    /** 
+     * @brief 获取 json
+     */
+    SFL_NODISCARD auto getJson() const -> const nlohmann::json&;
 
 
     /**
      * @brief 验证函数（验证是否有包含的异常）
      */
-    auto validate() -> bool;
+    SFL_NODISCARD auto validate() const -> bool;
 
     /**
      * @brief 验证函数（在 Guard 类使用）
+     * @note 回调函数,按项目约定使用大驼峰命名
      */
     auto GuardConstructor() -> void;
 
     /**
      * @brief 验证函数（在 Guard 类使用）
+     * @note 回调函数,按项目约定使用大驼峰命名
      */
     auto GuardDestructor() -> void;
 private:
     /**
      * @brief 检查 path 是否存在（接受参数）
      */
-    auto checkPathExistsWithPath(const path_t& filePath) -> bool;
+    SFL_NODISCARD
+    auto checkPathExistsWithPath(const path_t& filePath) const -> bool;
 
     /**
      * @brief 检查文件是否为常规文件（接受参数）
      */
-    auto checkFileIsRegular(const path_t& filePath) -> bool;
+    SFL_NODISCARD
+    auto checkFileIsRegular(const path_t& filePath) const -> bool;
 
 
     std::exception_ptr m_lazyLoadExceptPtr = nullptr;
