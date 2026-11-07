@@ -33,8 +33,7 @@ SFL_I18N Lang::Lang(
     const std::optional<path_t>& dir/* = std::nullopt*/
 ) noexcept {
     try {
-        m_langCode = langCode;
-        m_dir = dir ? *dir : SFL_I18N getExeDir() / LANG;
+        set(langCode, dir);
     }
     catch (...) {
         m_lazyLoadExceptPtr = std::current_exception();
@@ -43,7 +42,7 @@ SFL_I18N Lang::Lang(
 
 auto SFL_I18N Lang::set(
     std::string_view langCode,
-    const std::optional<path_t>& dir
+    const std::optional<path_t>& dir/* = std::nullopt*/
 ) -> void {
     m_langCode = langCode;
     m_dir = dir ? *dir : SFL_I18N getExeDir() / LANG;
@@ -60,17 +59,26 @@ auto SFL_I18N Lang::load(
 
 auto SFL_I18N Lang::reload() -> void {
     path_t langFilePath = m_dir / (m_langCode + ".json");
-    if(!checkFileExists()) {
-        SFL_I18N failRuntime("Language file not found: " + langFilePath.string());
+
+    if (!checkFileExists()) {
+        SFL_I18N failRuntime(
+            "Language file not found: " + langFilePath.string()
+        );
     }
 
-    std::ifstream jsoninput(langFilePath.string());
+    std::ifstream jsoninput(langFilePath);
 
     if (!jsoninput.is_open()) {
-        SFL_I18N failRuntime("Language file not found: " + langFilePath.string());
+        SFL_I18N failRuntime(
+            "Cannot open language file: " + langFilePath.string()
+        );
     }
 
-    jsoninput >> m_json;
+    nlohmann::json newJson;
+    jsoninput >> newJson;
+
+    m_json = std::move(newJson);
+    m_lazyLoadExceptPtr = nullptr;
     jsoninput.close();
 }
 
@@ -94,14 +102,17 @@ SFL_NODISCARD auto SFL_I18N Lang::getJson() const -> const nlohmann::json& {
     return m_json;
 }
 
+SFL_NODISCARD auto SFL_I18N Lang::getLangName() const -> std::string {
+    return m_json.value("language_name", "Unknown");
+}
 
 SFL_NODISCARD
-auto SFL_I18N Lang::validate() const -> bool {
+auto SFL_I18N Lang::hasDeferredException() const -> bool {
     return static_cast<bool>(m_lazyLoadExceptPtr);
 }
 
 auto SFL_I18N Lang::GuardConstructor() -> void {
-    if (validate()) {
+    if (hasDeferredException()) {
         std::rethrow_exception(m_lazyLoadExceptPtr);
     }
 }
@@ -110,13 +121,41 @@ auto SFL_I18N Lang::GuardDestructor() -> void {
     return;
 }
 
+
+
+SFL_NODISCARD
+auto SFL_I18N Lang::getAvailableLanguages(
+    const std::optional<path_t>& dir/* = std::nullopt*/
+) -> std::vector<std::string> {
+    path_t langDir = dir ? *dir : SFL_I18N getExeDir() / LANG;
+    std::vector<std::string> availableLanguages;
+
+    if (!checkPathExistsWithPath(langDir) ||
+        !checkPathIsRegular(langDir)) {
+        return availableLanguages;
+    }
+
+    for (const auto& entry : std::filesystem::directory_iterator(langDir)) {
+        if (entry.is_regular_file() && entry.path().extension() == ".json") {
+            availableLanguages.push_back(entry.path().stem().string());
+        }
+    }
+
+    return availableLanguages;
+}
+
  
 SFL_NODISCARD
-auto SFL_I18N Lang::checkPathExistsWithPath(const path_t& filePath) const -> bool {
+auto SFL_I18N Lang::checkPathExistsWithPath(const path_t& filePath) -> bool {
     return std::filesystem::exists(filePath);
 }
 
 SFL_NODISCARD
-auto SFL_I18N Lang::checkFileIsRegular(const path_t& filePath) const -> bool {
+auto SFL_I18N Lang::checkFileIsRegular(const path_t& filePath) -> bool {
     return std::filesystem::is_regular_file(filePath);
+}
+
+SFL_NODISCARD
+auto SFL_I18N Lang::checkPathIsRegular(const path_t& path) -> bool {
+    return std::filesystem::is_directory(path);
 }

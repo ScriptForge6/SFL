@@ -26,6 +26,7 @@
 #include <optional>
 #include <string>
 #include <string_view>
+#include <vector>
 
 #include <nlohmann/json.hpp>
 
@@ -95,11 +96,16 @@ public:
      */
     SFL_NODISCARD auto getJson() const -> const nlohmann::json&;
 
+    /**
+     * @brief 获取语言名称
+     */
+    SFL_NODISCARD auto getLangName() const -> std::string;
 
+    
     /**
      * @brief 验证函数（验证是否有包含的异常）
      */
-    SFL_NODISCARD auto validate() const -> bool;
+    SFL_NODISCARD auto hasDeferredException() const -> bool;
 
     /**
      * @brief 验证函数（在 Guard 类使用）
@@ -112,18 +118,35 @@ public:
      * @note 回调函数,按项目约定使用大驼峰命名
      */
     auto GuardDestructor() -> void;
+
+    /**
+     * @brief 获取可用的语言列表
+     * @param[in] dir 语言文件夹位置
+     * @return 可用的语言列表
+     */
+    SFL_NODISCARD
+    static auto getAvailableLanguages(
+        const std::optional<path_t>& dir
+        = std::nullopt/* = getExeDir() / LANG*/
+    ) -> std::vector<std::string>;
 private:
     /**
      * @brief 检查 path 是否存在（接受参数）
      */
     SFL_NODISCARD
-    auto checkPathExistsWithPath(const path_t& filePath) const -> bool;
+    static auto checkPathExistsWithPath(const path_t& filePath) -> bool;
 
     /**
      * @brief 检查文件是否为常规文件（接受参数）
      */
     SFL_NODISCARD
-    auto checkFileIsRegular(const path_t& filePath) const -> bool;
+    static auto checkFileIsRegular(const path_t& filePath) -> bool;
+
+    /**
+     * @brief 检查文件是否为常规路径（接受参数）
+     */
+    SFL_NODISCARD
+    static auto checkPathIsRegular(const path_t& path) -> bool;
 
 
     std::exception_ptr m_lazyLoadExceptPtr = nullptr;
