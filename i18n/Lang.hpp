@@ -27,7 +27,7 @@
 #include <string>
 #include <string_view>
 
-//#include <nlohmann/json.hpp>
+#include <nlohmann/json.hpp>
 
 SFL_I18N_START
 /**
@@ -42,7 +42,7 @@ public:
     /**
      * @brief Lang 的构造函数
      * @param[in] langCode 文件名称（使用 ISO-639-1 ）
-     * @param[in] path     文件夹位置
+     * @param[in] dir      文件夹位置
      */
     Lang(
         std::string_view langCode,
@@ -51,29 +51,85 @@ public:
     ) noexcept;
     
     /**
+     * @brief 设置变量
+     * @param[in] langCode 文件名称（使用 ISO-639-1 ）
+     * @param[in] dir      文件夹位置
+     */
+    auto set(
+        std::string_view langCode,
+        const std::optional<path_t>& dir
+            = std::nullopt/* = getExeDir() / LANG*/
+    ) -> void;
+
+    /**
+     * @brief 加载
+     */
+    auto load(
+        std::string_view langCode,
+        const std::optional<path_t>& dir = std::nullopt
+    ) -> void;
+
+    /**
      * @brief 重加载
      */
     auto reload() -> void;
 
+
+    /** 
+     * @brief 检查文件是否存在
+     */
+    SFL_NODISCARD auto checkFileExists() const -> bool;
+
+    /** 
+     * @brief 获取文件夹
+     */
+    SFL_NODISCARD auto getDir() const -> const path_t&;
+
+    /** 
+     * @brief 获取字母代码
+     */
+    SFL_NODISCARD auto getLangCode() const -> const std::string&;
+
+    /** 
+     * @brief 获取 json
+     */
+    SFL_NODISCARD auto getJson() const -> const nlohmann::json&;
+
+
     /**
      * @brief 验证函数（验证是否有包含的异常）
      */
-    auto validate() -> bool;
+    SFL_NODISCARD auto validate() const -> bool;
 
     /**
      * @brief 验证函数（在 Guard 类使用）
+     * @note 回调函数,按项目约定使用大驼峰命名
      */
     auto GuardConstructor() -> void;
 
     /**
      * @brief 验证函数（在 Guard 类使用）
+     * @note 回调函数,按项目约定使用大驼峰命名
      */
     auto GuardDestructor() -> void;
 private:
+    /**
+     * @brief 检查 path 是否存在（接受参数）
+     */
+    SFL_NODISCARD
+    auto checkPathExistsWithPath(const path_t& filePath) const -> bool;
+
+    /**
+     * @brief 检查文件是否为常规文件（接受参数）
+     */
+    SFL_NODISCARD
+    auto checkFileIsRegular(const path_t& filePath) const -> bool;
+
+
     std::exception_ptr m_lazyLoadExceptPtr = nullptr;
     std::string m_langCode;
     path_t m_dir;
-    //nlohmann::json m_json;
+    nlohmann::json m_json;
 };
 SFL_I18N_END
 

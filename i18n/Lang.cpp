@@ -18,11 +18,15 @@
 
 #include "Lang.hpp"
 
+#include <fstream>
+
 #include <Guard.hpp>
 
-#include "ExePath.hpp"
+#include "detail/ExePath.hpp"
+#include "detail/ThrowWithoutMsg.hpp"
 
 #define SFL_LANG_INTERNAL_GUARD SFL_GUARD Guard r_guard(*this)
+
 
 SFL_I18N Lang::Lang(
     std::string_view langCode,
@@ -30,18 +34,69 @@ SFL_I18N Lang::Lang(
 ) noexcept {
     try {
         m_langCode = langCode;
-        m_dir = dir ? *dir : SFL_I18N getExeDir() / "lang";//TODO: LANG
-        reload();
+        m_dir = dir ? *dir : SFL_I18N getExeDir() / LANG;
     }
     catch (...) {
         m_lazyLoadExceptPtr = std::current_exception();
     }
 }
 
-auto SFL_I18N Lang::reload() -> void {
+auto SFL_I18N Lang::set(
+    std::string_view langCode,
+    const std::optional<path_t>& dir
+) -> void {
+    m_langCode = langCode;
+    m_dir = dir ? *dir : SFL_I18N getExeDir() / LANG;
 }
 
-auto SFL_I18N Lang::validate() -> bool {
+auto SFL_I18N Lang::load(
+    std::string_view langCode,
+    const std::optional<path_t>& dir
+) -> void {
+    m_langCode = langCode;
+    m_dir = dir ? *dir : SFL_I18N getExeDir() / LANG;
+    reload();
+}
+
+auto SFL_I18N Lang::reload() -> void {
+    path_t langFilePath = m_dir / (m_langCode + ".json");
+    if(!checkFileExists()) {
+        SFL_I18N failRuntime("Language file not found: " + langFilePath.string());
+    }
+
+    std::ifstream jsoninput(langFilePath.string());
+
+    if (!jsoninput.is_open()) {
+        SFL_I18N failRuntime("Language file not found: " + langFilePath.string());
+    }
+
+    jsoninput >> m_json;
+    jsoninput.close();
+}
+
+
+SFL_NODISCARD auto SFL_I18N Lang::checkFileExists() const -> bool {
+    const path_t langFilePath = m_dir / (m_langCode + ".json");
+    return checkPathExistsWithPath(langFilePath) &&
+        checkFileIsRegular(langFilePath);
+}
+
+
+SFL_NODISCARD auto SFL_I18N Lang::getDir() const -> const path_t& {
+    return m_dir;
+}
+
+SFL_NODISCARD auto SFL_I18N Lang::getLangCode() const -> const std::string& {
+    return m_langCode;
+}
+
+SFL_NODISCARD auto SFL_I18N Lang::getJson() const -> const nlohmann::json& {
+    return m_json;
+}
+
+
+SFL_NODISCARD
+auto SFL_I18N Lang::validate() const -> bool {
     return static_cast<bool>(m_lazyLoadExceptPtr);
 }
 
@@ -53,4 +108,15 @@ auto SFL_I18N Lang::GuardConstructor() -> void {
 
 auto SFL_I18N Lang::GuardDestructor() -> void {
     return;
+}
+
+ 
+SFL_NODISCARD
+auto SFL_I18N Lang::checkPathExistsWithPath(const path_t& filePath) const -> bool {
+    return std::filesystem::exists(filePath);
+}
+
+SFL_NODISCARD
+auto SFL_I18N Lang::checkFileIsRegular(const path_t& filePath) const -> bool {
+    return std::filesystem::is_regular_file(filePath);
 }

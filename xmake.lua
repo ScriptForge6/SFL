@@ -24,6 +24,7 @@ add_defines(string.format("AUTHOR=\"%s\"", AUTHOR))
 add_rules("basename")
 
 set_policy("package.install_locally", true)
+add_requires("nlohmann_json >=3.11.0")
 
 set_defaultmode("debug")
 
@@ -31,8 +32,9 @@ add_defines(LIBRARY_DEFINE)
 
 set_languages("c++20")
 set_warnings("allextra")
+set_symbols("hidden")
 if is_mode("debug") then
-    set_symbols("debug", "hidden")
+    set_symbols("debug")
 end
 
 set_targetdir(BUILD_DIR)

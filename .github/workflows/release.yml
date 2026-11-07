@@ -20,6 +20,7 @@ jobs:
 
     steps:
       # 将各平台 Artifact 合并到 build/output。
+      # 各平台的目录是 <plat>/<arch>/<kind>/release，windows-x86 与 windows-x64 不会冲突。
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
@@ -49,6 +50,18 @@ jobs:
             }
           }
 
+      # upload-artifact 不保留文件权限，Linux / macOS 的可执行文件（无扩展名）要重新加上，
+      # 否则 tar.gz 里的程序解压后不能直接运行。
+      - name: Restore executable permission
+        shell: pwsh
+        run: |
+          Get-ChildItem -Path ./build/output -File -Recurse |
+            Where-Object { $_.Extension -eq '' } |
+            ForEach-Object {
+              Write-Host "chmod +x $($_.FullName)"
+              chmod +x $_.FullName
+            }
+
       - name: Compress artifacts
         shell: pwsh
         run: |
@@ -73,17 +86,35 @@ jobs:
 
             $archiveBase = "SFL_${libraryKind}_${plat}_${arch}"
 
-            $zipFile = Join-Path $destDir "$archiveBase.zip"
-            $tarFile = Join-Path $destDir "$archiveBase.tar.gz"
-
             Write-Host "----------------------------------------"
             Write-Host "Package: $archiveBase" -ForegroundColor Cyan
 
-            Compress-Archive -Path "$($dir.FullName)/*" -DestinationPath $zipFile -Force
-            tar -czvf $tarFile -C $dir.FullName .
+            if ($plat -eq 'windows') {
+              # Windows 用 zip
+              Compress-Archive -Path "$($dir.FullName)/*" -DestinationPath (Join-Path $destDir "$archiveBase.zip") -Force
+            }
+            else {
+              # Linux / macOS 用 tar.gz（保留可执行权限）
+              tar -czf (Join-Path $destDir "$archiveBase.tar.gz") -C $dir.FullName .
+            }
           }
 
+          Get-ChildItem $destDir | Format-Table Name, Length
+
+      # 只有推送标签时才发布 Release
       - name: Create release
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
         uses: softprops/action-gh-release@v2
         with:
           files: dist/*
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+
+      # 手动运行时没有标签，把压缩包作为产物留下来方便检查
+      - name: Upload dist (non-tag runs)
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: SFL-dist
+          path: dist/*
+          if-no-files-found: error
