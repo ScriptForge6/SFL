@@ -17,6 +17,33 @@ SFL is licensed under [Apache License 2.0](LICENSE.txt). It depends on the third
 
 This file lists the third-party components that SFL includes or uses at build time, together with their license notices. It is maintained by hand. Components that are only required at runtime and are not distributed with SFL (such as GTK, WebKitGTK and the WebView2 Runtime) are listed separately at the end. Please update this file whenever a dependency is added, removed or upgraded.
 
+## Components
+
+| Component | Version | Source | License |
+|---|---|---|---|
+| webview | v0.12.0 | [github.com/webview/webview](https://github.com/webview/webview) | [MIT](license/WEBVIEW_LICENSE.txt) |
+| nlohmann_json | v3.12.0 | [github.com/nlohmann/json](https://github.com/nlohmann/json) | [MIT](license/NLOHMANN_JSON_LICENSE.txt) |
+| Microsoft.Web.WebView2 SDK | 1.0.4191.47 | [nuget.org](https://www.nuget.org/packages/Microsoft.Web.WebView2) | [BSD-3-Clause](license/WEBVIEW2_LICENSE.txt) |
+
+## Runtime dependencies (not distributed with SFL)
+
+SFL does not include or redistribute them. Links to their license texts are provided for reference only.
+
+| Component | Platform | Source | License |
+|---|---|---|---|
+| GTK 3 | Linux | [gtk.org](https://www.gtk.org) | Mainly [LGPL-2.1-or-later](https://spdx.org/licenses/LGPL-2.1-or-later.html); some files under other licenses (see the package's copyright file) |
+| WebKitGTK | Linux | [webkitgtk.org](https://webkitgtk.org) | Mainly [BSD-2-Clause](https://spdx.org/licenses/BSD-2-Clause.html); some files under other licenses, including LGPL (see the package's copyright file) |
+| Microsoft Edge WebView2 Runtime | Windows | [developer.microsoft.com](https://developer.microsoft.com/microsoft-edge/webview2/) | Microsoft license terms |
+| WebKit | macOS | [webkit.org](https://webkit.org) | System component |
+
+## Referenced Projects
+
+Parts of this file are copied from and modified based on the project below, which is licensed under the MIT License. Its copyright notice and license text are reproduced unchanged.
+
+| Project | Source | Copied From | License |
+|---|---|---|---|
+| Deepseek Harness | [github.com/deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness) | [THIRD_PARTY_NOTICES.md](https://github.com/deepseek-ai/deepseek-harness/blob/master/THIRD_PARTY_NOTICES.md) | [MIT](license/DEEPSEEK_HARNESS_LICENSE.txt)
+
 ---
 
 # 中文
@@ -24,61 +51,30 @@ This file lists the third-party components that SFL includes or uses at build ti
 > 本文件的部分文字复制自 [Deepseek Harness](https://github.com/deepseek-ai/deepseek-harness/blob/master/THIRD_PARTY_NOTICES.md)(MIT 许可证),并作了修改。  
 > 其版权声明和许可证全文见文末“参考项目”一节。
 
-SFL 以 [Apache License 2.0](LICENSE) 授权。它包含或依赖下列第三方软件,各项目仍适用其各自的许可证,本文件不改变这些条款。
+SFL 以 [Apache License 2.0](LICENSE.txt) 授权。它包含或依赖下列第三方软件,各项目仍适用其各自的许可证,本文件不改变这些条款。
 
 本文件列出了 SFL 包含或在构建时使用的第三方组件及其许可证声明,由人工维护。仅在运行时需要、且不随 SFL 分发的组件(如 GTK、WebKitGTK 和 WebView2 Runtime)单独列在文末。新增、移除或升级依赖时,请同步更新本文件。
 
-// webwiew
-// website: https://github.com/webview/webview
-MIT License
+## 组件
 
-Copyright (c) 2017 Serge Zaitsev
-Copyright (c) 2022 Steffen André Langnes
+| 组件 | 版本 | 来源 | 许可证 |
+| --- | --- | --- | --- |
+| webview | v0.12.0 | [github.com/webview/webview](https://github.com/webview/webview) | [MIT](license/WEBVIEW_LICENSE.txt) |
+| nlohmann_json | v3.12.0 | [github.com/nlohmann/json](https://github.com/nlohmann/json) | [MIT](license/NLOHMANN_JSON_LICENSE.txt) |
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+## 运行时依赖(未随 SFL 分发)
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+| 组件 | 平台 | 来源 | 许可证 |
+|---|---|---|---|
+| GTK 3 | Linux | [gtk.org](https://www.gtk.org) | 主要为 [LGPL-2.1-or-later](https://spdx.org/licenses/LGPL-2.1-or-later.html);部分文件适用其他许可证(见发行版包内的 copyright 文件) |
+| WebKitGTK | Linux | [webkitgtk.org](https://webkitgtk.org) | 主要为 [BSD-2-Clause](https://spdx.org/licenses/BSD-2-Clause.html);部分文件适用其他许可证,包括 LGPL(见发行版包内的 copyright 文件) |
+| Microsoft Edge WebView2 Runtime | Windows | [developer.microsoft.com](https://developer.microsoft.com/microsoft-edge/webview2/) | 微软许可条款 |
+| WebKit | macOS | [webkit.org](https://webkit.org) | 系统组件 |
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+## 参考项目
 
-// webview2
-// website: https://www.nuget.org/packages/Microsoft.Web.WebView2
-Copyright (C) Microsoft Corporation. All rights reserved.
+本文件的部分文字复制自下列项目(MIT 许可证)并作了修改。其版权声明和许可证文本原样保留如下。
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * The name of Microsoft Corporation, or the names of its contributors 
-may not be used to endorse or promote products derived from this
-software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+| 项目 | 来源 | 复制自 | 许可证 |
+|---|---|---|---|
+| Deepseek Harness | [github.com/deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness) | [THIRD_PARTY_NOTICES.md](https://github.com/deepseek-ai/deepseek-harness/blob/master/THIRD_PARTY_NOTICES.md) | [MIT](license/DEEPSEEK_HARNESS_LICENSE.txt)
