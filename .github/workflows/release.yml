@@ -19,6 +19,11 @@ jobs:
       contents: write
 
     steps:
+      # 只为了取得 LICENSE.txt、THIRD_PARTY_NOTICES.md 和 license/ 目录，不需要子模块。
+      # 必须放在 download-artifact 之前：checkout 会清空工作区。
+      - name: Checkout
+        uses: actions/checkout@v4
+
       # 将各平台 Artifact 合并到 build/output。
       # 各平台的目录是 <plat>/<arch>/<kind>/release，windows-x86 与 windows-x64 不会冲突。
       - name: Download build artifacts
@@ -71,6 +76,17 @@ jobs:
             New-Item -Path $destDir -ItemType Directory | Out-Null
           }
 
+          # 随包分发的许可证文件。缺任何一个都直接失败，避免发出不带许可证的包。
+          $licenseFiles = @('LICENSE.txt', 'THIRD_PARTY_NOTICES.md')
+          $licenseDir   = './license'
+          # 仅供查阅的发行版版权清单，不打进发布包
+          $skipLicense  = @()
+
+          foreach ($f in $licenseFiles) {
+            if (-not (Test-Path $f -PathType Leaf)) { throw "Missing license file: $f" }
+          }
+          if (-not (Test-Path $licenseDir -PathType Container)) { throw "Missing directory: $licenseDir" }
+
           $outputBase = "./build/output"
           $releaseDirs = Get-ChildItem -Path $outputBase -Recurse -Directory |
             Where-Object { $_.Name -eq 'release' }
@@ -88,6 +104,16 @@ jobs:
 
             Write-Host "----------------------------------------"
             Write-Host "Package: $archiveBase" -ForegroundColor Cyan
+
+            # 把许可证放进压缩包根目录（此步在“删除中间文件”和 chmod 之后，不会被误删或加执行权限）
+            foreach ($f in $licenseFiles) {
+              Copy-Item -Path $f -Destination $dir.FullName -Force
+            }
+            $licenseOut = Join-Path $dir.FullName 'license'
+            New-Item -Path $licenseOut -ItemType Directory -Force | Out-Null
+            Get-ChildItem -Path $licenseDir -File |
+              Where-Object { $skipLicense -notcontains $_.Name } |
+              Copy-Item -Destination $licenseOut -Force
 
             if ($plat -eq 'windows') {
               # Windows 用 zip
