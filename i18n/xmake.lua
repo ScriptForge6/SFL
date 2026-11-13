@@ -17,9 +17,11 @@ target(I18N_NAME)
 	set_kind(LIBRARY_KIND)
 
     add_deps(GUARD_NAME)
+    add_deps(JSONCONTAINER_NAME)
 
     add_defines("LANG=\"" .. LANG_DEFINE .. "\"", {public = true})
     add_defines("SFL_GUARD_IMPORT", {public = true})
+    add_defines("SFL_JSONCONTAINER_IMPORT", {public = true})
     add_defines("SFL_I18N_EXPORT")
 
     add_packages("nlohmann_json", {public = true})

@@ -28,9 +28,22 @@
 #include <string_view>
 #include <vector>
 
+#include <Json.hpp>
+
 #include <nlohmann/json.hpp>
 
 SFL_I18N_START
+#if 0
+//实验性设计 / 未定稿
+
+/**
+ * @brief i18n 类
+ * @details 继承自 Json 类，提供了语言文件的加载和管理功能
+ * @note 线程安全
+ */
+class SFL_API_LANG Lang : public SFL_JSONCONTAINER Json {
+};
+#else
 /**
  * @brief i18n 类
  * @note 非线程安全
@@ -155,5 +168,6 @@ private:
     nlohmann::json m_json;
 };
 SFL_I18N_END
+#endif
 
 #endif

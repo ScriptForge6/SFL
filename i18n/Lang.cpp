@@ -25,6 +25,10 @@
 #include "detail/ExePath.hpp"
 #include "detail/ThrowWithoutMsg.hpp"
 
+#if 0
+
+#else
+
 #define SFL_LANG_INTERNAL_GUARD SFL_GUARD Guard r_guard(*this)
 
 
@@ -159,3 +163,5 @@ SFL_NODISCARD
 auto SFL_I18N Lang::checkPathIsRegular(const path_t& path) -> bool {
     return std::filesystem::is_directory(path);
 }
+
+#endif
