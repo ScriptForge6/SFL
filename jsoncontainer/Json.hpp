@@ -22,6 +22,7 @@
 #include "JsoncontainerApi.hpp"
 
 #include <istream>
+#include <mutex>
 #include <ostream>
 #include <shared_mutex>
 
@@ -43,16 +44,6 @@ private:
     template <typename T>
     struct value_return_type {
         using type = std::decay_t<T>;
-    };
-
-    template <>
-    struct value_return_type<const char*> {
-        using type = std::string;
-    };
-
-    template <>
-    struct value_return_type<char*> {
-        using type = std::string;
     };
 public:
     using json_t = nlohmann::json;
@@ -209,6 +200,16 @@ public:
 private:
     mutable std::shared_mutex m_mutex;
     json_t m_json;
+};
+
+template <>
+struct value_return_type<const char*> {
+    using type = std::string;
+};
+
+template <>
+struct value_return_type<char*> {
+    using type = std::string;
 };
 
 auto SFL_API_JSONCONTAINER operator>>(std::istream& is, Json& json) -> std::istream&;
