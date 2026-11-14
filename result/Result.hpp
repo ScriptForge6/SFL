@@ -33,7 +33,8 @@
 SFL_RESULT_START
 
 /**
- * @brief 类似 Rust 的 Result 类
+ * @brief 类似于 Rust Result 的结果类型
+ * @note 为保持与 std::expected 一致的 API 命名风格，例外使用 snake_case。
  */
 template <ResultValueType T, ResultErrorType E>
 class Result {
