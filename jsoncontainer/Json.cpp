@@ -223,17 +223,19 @@ SFL_NODISCARD auto SFL_JSONCONTAINER Json::getJson() const -> json_t {
 auto SFL_JSONCONTAINER Json::set(
     const std::string& key,
     const json_t& value
-) -> void {
+) -> Json& {
     std::unique_lock lock(m_mutex);
     m_json[key] = value;
+    return *this;
 }
 
 auto SFL_JSONCONTAINER Json::set(
     const std::string& key,
     json_t&& value
-) -> void {
+) -> Json& {
     std::unique_lock lock(m_mutex);
     m_json[key] = std::move(value);
+    return *this;
 }
 
 auto SFL_JSONCONTAINER Json::erase(const std::string& key) -> bool {

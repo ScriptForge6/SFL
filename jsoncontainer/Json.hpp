@@ -148,18 +148,18 @@ public:
     auto set(
         const std::string& key,
         const json_t& value
-    ) -> void;
+    ) -> Json&;
 
     auto set(
         const std::string& key,
         json_t&& value
-    ) -> void;
+    ) -> Json&;
 
     template <typename ValueType>
     auto set(
         const std::string& key,
         ValueType&& value
-    ) -> void;
+    ) -> Json&;
 
     SFL_NODISCARD
     auto erase(const std::string& key) -> bool;
@@ -254,11 +254,12 @@ template <typename ValueType>
 auto SFL_JSONCONTAINER Json::set(
     const std::string& key,
     ValueType&& value
-) -> void {
+) -> Json& {
     json_t converted(std::forward<ValueType>(value));
 
     std::unique_lock lock(m_mutex);
     m_json[key] = std::move(converted);
+    return *this;
 }
 
 template <typename ValueType>
