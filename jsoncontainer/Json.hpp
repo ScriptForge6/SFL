@@ -203,12 +203,12 @@ private:
 };
 
 template <>
-struct value_return_type<const char*> {
+struct Json::value_return_type<const char*> {
     using type = std::string;
 };
 
 template <>
-struct value_return_type<char*> {
+struct Json::value_return_type<char*> {
     using type = std::string;
 };
 
