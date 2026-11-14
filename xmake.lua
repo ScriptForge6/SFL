@@ -53,7 +53,7 @@ add_includedirs(PROJECTDIR)
 add_headerfiles(API_FILE)
 
 includes(GUARD_LUA)
-includes(JSONCONTIANER_LUA)
+includes(JSONCONTAINER_LUA)
 includes(I18N_LUA)
 includes(MSG_LUA)
 includes(WEBVIEW_LUA)

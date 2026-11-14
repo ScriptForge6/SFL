@@ -21,6 +21,8 @@
 #define SFL_JSON_HPP
 #include "JsoncontainerApi.hpp"
 
+#include <istream>
+#include <ostream>
 #include <shared_mutex>
 
 #include <nlohmann/json.hpp>
@@ -37,6 +39,21 @@ SFL_JSONCONTAINER_START
  * 不直接返回内部引用、指针或迭代器。
  */
 class SFL_API_JSONCONTAINER Json {
+private:
+    template <typename T>
+    struct value_return_type {
+        using type = std::decay_t<T>;
+    };
+
+    template <>
+    struct value_return_type<const char*> {
+        using type = std::string;
+    };
+
+    template <>
+    struct value_return_type<char*> {
+        using type = std::string;
+    };
 public:
     using json_t = nlohmann::json;
 
@@ -54,7 +71,6 @@ public:
     using type_error = json_t::type_error;
     using out_of_range = json_t::out_of_range;
 
-public:
     // 构造与析构
     Json() = default;
     Json(const Json& other);
@@ -75,6 +91,11 @@ public:
     // 比较
     auto operator==(const Json& other) const -> bool;
     auto operator!=(const Json& other) const -> bool;
+
+    // 流运算符
+    friend auto SFL_API_JSONCONTAINER operator>>(std::istream& is, Json& json) -> std::istream&;
+    friend auto SFL_API_JSONCONTAINER operator<<(std::ostream& os, const Json& json) -> std::ostream&;
+
 
     // 基础信息
     SFL_NODISCARD auto type() const -> value_t;
@@ -107,12 +128,17 @@ public:
     auto at(size_type index) const -> json_t;
 
     // 获取默认值
-    template <typename ValueType>
+    template <
+        typename ValueType,
+        typename ReturnType = typename value_return_type<
+            std::decay_t<ValueType>
+        >::type
+    >
     SFL_NODISCARD
     auto value(
         const std::string& key,
         ValueType&& default_value
-    ) const -> std::decay_t<ValueType>;
+    ) const -> ReturnType;
 
     // 类型转换
     template <typename ValueType>
@@ -185,38 +211,46 @@ private:
     json_t m_json;
 };
 
+auto SFL_API_JSONCONTAINER operator>>(std::istream& is, Json& json) -> std::istream&;
+auto SFL_API_JSONCONTAINER operator<<(std::ostream& os, const Json& json) -> std::ostream&;
+
+SFL_JSONCONTAINER_END
 
 // ============================================================
 // 模板实现
 // ============================================================
 
-template <typename ValueType>
-auto Json::value(
+template <
+    typename ValueType,
+    typename ReturnType
+>
+SFL_NODISCARD
+auto SFL_JSONCONTAINER Json::value(
     const std::string& key,
     ValueType&& default_value
-) const -> std::decay_t<ValueType> {
-    std::shared_lock lock(m_mutex);
+) const -> ReturnType {
+     std::shared_lock lock(m_mutex);
 
-    return m_json.value(
+    return m_json.template value<ReturnType>(
         key,
-        std::forward<ValueType>(default_value)
+        ReturnType(std::forward<ValueType>(default_value))
     );
 }
 
 template <typename ValueType>
-auto Json::get() const -> ValueType {
+auto SFL_JSONCONTAINER Json::get() const -> ValueType {
     std::shared_lock lock(m_mutex);
     return m_json.template get<ValueType>();
 }
 
 template <typename ValueType>
-auto Json::get_to(ValueType& value) const -> void {
+auto SFL_JSONCONTAINER Json::get_to(ValueType& value) const -> void {
     std::shared_lock lock(m_mutex);
     m_json.get_to(value);
 }
 
 template <typename ValueType>
-auto Json::set(
+auto SFL_JSONCONTAINER Json::set(
     const std::string& key,
     ValueType&& value
 ) -> void {
@@ -227,19 +261,21 @@ auto Json::set(
 }
 
 template <typename ValueType>
-auto Json::push_back(ValueType&& value) -> void {
+auto SFL_JSONCONTAINER Json::push_back(ValueType&& value)
+    -> Json& {
     json_t converted(std::forward<ValueType>(value));
 
     std::unique_lock lock(m_mutex);
     m_json.push_back(std::move(converted));
+    return *this;
 }
 
 template <typename... Args>
-auto Json::emplace_back(Args&&... args) -> void {
+auto SFL_JSONCONTAINER Json::emplace_back(Args&&... args)
+    -> Json& {
     std::unique_lock lock(m_mutex);
     m_json.emplace_back(std::forward<Args>(args)...);
+    return *this;
 }
-
-SFL_JSONCONTAINER_END
 
 #endif

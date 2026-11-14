@@ -22,10 +22,7 @@
 #include <utility>
 
 
-// ============================================================
 // 构造函数
-// ============================================================
-
 SFL_JSONCONTAINER Json::Json(const Json& other) {
     std::shared_lock lock(other.m_mutex);
     m_json = other.m_json;
@@ -45,10 +42,7 @@ SFL_JSONCONTAINER Json::Json(json_t&& other)
 }
 
 
-// ============================================================
 // 赋值运算符
-// ============================================================
-
 auto SFL_JSONCONTAINER Json::operator=(const Json& other) -> Json& {
     if (this == &other) {
         return *this;
@@ -86,10 +80,7 @@ auto SFL_JSONCONTAINER Json::operator=(json_t&& other) -> Json& {
 }
 
 
-// ============================================================
 // 比较
-// ============================================================
-
 auto SFL_JSONCONTAINER Json::operator==(const Json& other) const -> bool {
     if (this == &other) {
         return true;
@@ -104,10 +95,23 @@ auto SFL_JSONCONTAINER Json::operator!=(const Json& other) const -> bool {
 }
 
 
-// ============================================================
-// 基础信息
-// ============================================================
+// 流运算符
+auto SFL_JSONCONTAINER operator>>(std::istream& is, Json& json)
+    -> std::istream& {
+    Json::json_t temp;
+    is >> temp;
+    json = std::move(temp);
+    return is;
+}
 
+auto SFL_JSONCONTAINER operator<<(std::ostream& os, const Json& json)
+    -> std::ostream& {
+    os << json.getJson();
+    return os;
+}
+
+
+// 基础信息
 SFL_NODISCARD auto SFL_JSONCONTAINER Json::type() const -> value_t {
     std::shared_lock lock(m_mutex);
     return m_json.type();
@@ -129,10 +133,7 @@ SFL_NODISCARD auto SFL_JSONCONTAINER Json::max_size() const -> size_type {
 }
 
 
-// ============================================================
 // 类型判断
-// ============================================================
-
 SFL_NODISCARD auto SFL_JSONCONTAINER Json::is_null() const -> bool {
     std::shared_lock lock(m_mutex);
     return m_json.is_null();
@@ -194,10 +195,7 @@ SFL_NODISCARD auto SFL_JSONCONTAINER Json::is_discarded() const -> bool {
 }
 
 
-// ============================================================
 // 元素查询
-// ============================================================
-
 SFL_NODISCARD auto SFL_JSONCONTAINER Json::contains(const std::string& key) const -> bool {
     std::shared_lock lock(m_mutex);
     return m_json.contains(key);
@@ -214,20 +212,14 @@ SFL_NODISCARD auto SFL_JSONCONTAINER Json::at(size_type index) const -> json_t {
 }
 
 
-// ============================================================
 // 获取底层 JSON 副本
-// ============================================================
-
 SFL_NODISCARD auto SFL_JSONCONTAINER Json::getJson() const -> json_t {
     std::shared_lock lock(m_mutex);
     return m_json;
 }
 
 
-// ============================================================
 // 修改 Object
-// ============================================================
-
 auto SFL_JSONCONTAINER Json::set(
     const std::string& key,
     const json_t& value
@@ -255,10 +247,7 @@ auto SFL_JSONCONTAINER Json::erase(const std::string& key) -> bool {
 }
 
 
-// ============================================================
 // 修改 Array
-// ============================================================
-
 auto SFL_JSONCONTAINER Json::push_back(const json_t& value) -> Json& {
     std::unique_lock lock(m_mutex);
     m_json.push_back(value);
@@ -278,10 +267,7 @@ auto SFL_JSONCONTAINER Json::erase(size_type index) -> Json& {
 }
 
 
-// ============================================================
 // 通用修改
-// ============================================================
-
 auto SFL_JSONCONTAINER Json::clear() -> void {
     std::unique_lock lock(m_mutex);
     m_json.clear();
@@ -322,10 +308,7 @@ auto SFL_JSONCONTAINER Json::swap(Json& other) -> void {
 }
 
 
-// ============================================================
 // 序列化
-// ============================================================
-
 auto SFL_JSONCONTAINER Json::dump(
     int indent,
     char indent_char,
@@ -342,10 +325,7 @@ auto SFL_JSONCONTAINER Json::dump(
 }
 
 
-// ============================================================
 // 解析
-// ============================================================
-
 auto SFL_JSONCONTAINER Json::parse(const std::string& text) -> Json {
     return Json(json_t::parse(text));
 }

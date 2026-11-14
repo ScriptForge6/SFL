@@ -78,7 +78,7 @@ auto SFL_I18N Lang::reload() -> void {
         );
     }
 
-    nlohmann::json newJson;
+    json_t newJson;
     jsoninput >> newJson;
 
     m_json = std::move(newJson);
@@ -102,7 +102,7 @@ SFL_NODISCARD auto SFL_I18N Lang::getLangCode() const -> const std::string& {
     return m_langCode;
 }
 
-SFL_NODISCARD auto SFL_I18N Lang::getJson() const -> const nlohmann::json& {
+SFL_NODISCARD auto SFL_I18N Lang::getJson() const -> const json_t& {
     return m_json;
 }
 

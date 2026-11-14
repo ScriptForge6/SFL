@@ -51,6 +51,7 @@ class SFL_API_LANG Lang : public SFL_JSONCONTAINER Json {
 class SFL_API_LANG Lang {
 private:
     using path_t = std::filesystem::path;
+    using json_t = SFL_JSONCONTAINER Json;
 public:
     Lang() = delete;
     /**
@@ -107,7 +108,7 @@ public:
     /** 
      * @brief 获取 json
      */
-    SFL_NODISCARD auto getJson() const -> const nlohmann::json&;
+    SFL_NODISCARD auto getJson() const -> const json_t&;
 
     /**
      * @brief 获取语言名称
@@ -165,7 +166,7 @@ private:
     std::exception_ptr m_lazyLoadExceptPtr = nullptr;
     std::string m_langCode;
     path_t m_dir;
-    nlohmann::json m_json;
+    json_t m_json;
 };
 SFL_I18N_END
 #endif
