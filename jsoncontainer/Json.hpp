@@ -38,11 +38,12 @@ SFL_JSONCONTAINER_START
  * 读取操作允许并发，修改操作独占访问。
  *
  * 不直接返回内部引用、指针或迭代器。
+ * @note 为了兼容 nlohmann 语义,例外使用 snake_case
  */
 class SFL_API_JSONCONTAINER Json {
 private:
     template <typename T>
-    struct value_return_type {
+    struct ValueReturnType {
         using type = std::decay_t<T>;
     };
 public:
@@ -121,7 +122,7 @@ public:
     // 获取默认值
     template <
         typename ValueType,
-        typename ReturnType = typename value_return_type<
+        typename ReturnType = typename ValueReturnType<
             std::decay_t<ValueType>
         >::type
     >
@@ -203,12 +204,12 @@ private:
 };
 
 template <>
-struct Json::value_return_type<const char*> {
+struct Json::ValueReturnType<const char*> {
     using type = std::string;
 };
 
 template <>
-struct Json::value_return_type<char*> {
+struct Json::ValueReturnType<char*> {
     using type = std::string;
 };
 
