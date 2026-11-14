@@ -16,8 +16,6 @@ includes("../define.lua")
 target(GUARD_NAME)
 	set_kind("headeronly")
 
-    add_defines("SFL_GUARD_EXPORT")
-
     add_includedirs(GUARD_DIR, {public = true})
     
     add_headerfiles(path.join(GUARD_DIR, "*.hpp"))

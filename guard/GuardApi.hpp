@@ -22,17 +22,6 @@
 #ifndef SFL_GUARDAPI_HPP
 #define SFL_GUARDAPI_HPP
 
-#if defined(SFL_GUARD_IMPORT) && defined(SFL_GUARD_EXPORT)
-	#error "Error: Only one of SFL_LANG_IMPORT and SFL_LANG_EXPORT may be defined"
-#endif
-#if defined(SFL_GUARD_IMPORT)
-	#define SFL_API_GUARD SFL_IMPORT_API
-#elif defined(SFL_GUARD_EXPORT)
-	#define SFL_API_GUARD SFL_EXPORT_API
-#else
-	#error "Error: Must define SFL_LANG_IMPORT or SFL_LANG_EXPORT"
-#endif
-
 #define SFL_GUARD_START \
 	SFL_START           \
 	namespace Guard {

@@ -52,6 +52,7 @@ end
 add_includedirs(PROJECTDIR)
 add_headerfiles(API_FILE)
 
+includes(RESULT_LUA)
 includes(GUARD_LUA)
 includes(I18N_LUA)
 includes(MSG_LUA)
