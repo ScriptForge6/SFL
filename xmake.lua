@@ -24,7 +24,7 @@ add_defines(string.format("AUTHOR=\"%s\"", AUTHOR))
 add_rules("basename")
 
 set_policy("package.install_locally", true)
-add_requires("nlohmann_json >=3.11.0")
+add_requires("nlohmann_json 3.12.0")
 
 set_defaultmode("debug")
 
