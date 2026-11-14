@@ -36,7 +36,17 @@ SFL does not include or redistribute them. Links to their license texts are prov
 | Microsoft Edge WebView2 Runtime | Windows | [developer.microsoft.com](https://developer.microsoft.com/microsoft-edge/webview2/) | Microsoft license terms |
 | WebKit | macOS | [webkit.org](https://webkit.org) | System component |
 
+## Build-time dependencies (not distributed with SFL)
+
+These components are used during development, testing or building SFL.
+They are not included in SFL's distributed binaries.
+
+| Component | Version | Source | License |
+| --- | --- | --- | --- |
+| GoogleTest | v1.17.0 | [github.com/google/googletest](https://github.com/google/googletest) | [BSD-3-Clause](license/GTEST_LICENSE.txt) |
+
 <a id="referenced-projects"></a>
+
 ## Referenced Projects
 
 Parts of this file are copied from and modified based on the project below, which is licensed under the MIT License. Its copyright notice and license text are provided unchanged in the linked file.
@@ -75,6 +85,13 @@ SFL 不包含也不再分发它们。此处仅提供许可证文本的链接,供
 | Microsoft Edge WebView2 Runtime | Windows | [developer.microsoft.com](https://developer.microsoft.com/microsoft-edge/webview2/) | 微软许可条款 |
 | WebKit | macOS | [webkit.org](https://webkit.org) | 系统组件 |
 
+## 构建时依赖（不随 SFL 分发）
+
+这些组件用于 SFL 的开发、测试或构建，不包含在 SFL 的分发二进制文件中。
+
+| 组件 | 平台 | 来源 | 许可证 |
+| --- | --- | --- | --- |
+| GoogleTest | v1.17.0 | [github.com/google/googletest](https://github.com/google/googletest) | [BSD-3-Clause](license/GTEST_LICENSE.txt) |
 ## 参考项目
 
 本文件的部分文字复制自下列项目(MIT 许可证)并作了修改。其版权声明和许可证文本在所链接的文件中原样提供。
